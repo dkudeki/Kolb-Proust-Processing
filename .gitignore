@@ -1,3 +1,5 @@
 tei/
 __pycache__/
 ~$pping-TEI.docx
+*.sublime-workspace
+*.sublime-project
