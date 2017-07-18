@@ -1,6 +1,8 @@
-import os, json, datetime
+# -*- coding: utf-8 -*-
+import os, json, datetime, re
 from shutil import copyfile
 from lxml import etree
+from unicodedata import normalize
 
 if os.name == 'nt':
 	SLASH = '\\'
@@ -8,6 +10,7 @@ else:
 	SLASH = '/'
 
 def readDate(target_date):
+#	print(target_date)
 	if len(target_date) == 4:
 		format = '%Y'
 	elif target_date[6:] == '00' and target_date[4:6] == '00':
@@ -18,19 +21,158 @@ def readDate(target_date):
 		format = '%Y%m%d'
 	return datetime.datetime.strptime(target_date,format)
 
+def extractDate(text_string):
+	print(text_string)
+	year_results = re.search(r'[12][890][0-9][0-9]',text_string)
+	year = None
+	if year_results:
+		year = year_results.group(0)
+		print(year_results.group(0))
+
+	month = None
+	month_results = re.search(ur'(janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre)',normalize('NFC',(text_string.lower().decode('utf-8') if type(text_string) is str else text_string.lower())))
+	months = {u'janvier': '01',u'février': '02',u'mars': '03',u'avril': '04',u'mai': '05',u'juin': '06',u'juillet': '07',u'août': '08',u'septembre': '09',u'octobre': '10',u'novembre': '11',u'décembre': '12'}
+	if month_results:
+		month = months[month_results.group(0)]
+		print(month_results.group(0))
+	else:
+		month = '00'
+
+	thirty_one_day_re = r' (1er|[1-9]|[12][0-9]|3[01]) '
+	thirty_day_re = r' (1er|[1-9]|[12][0-9]|30) '
+	twenty_nine_day_re = r' (1er|[1-9]|[12][0-9]) '
+
+	day = None
+	if month in ['01','03','05','07','08','10','12']:
+		day_result = re.search(thirty_one_day_re,text_string)
+	elif month in ['04','06','09','11']:
+		day_result = re.search(thirty_day_re,text_string)
+	else:
+		day_result = re.search(twenty_nine_day_re,text_string)
+
+	if day_result:
+		print(day_result.group(0).strip(' '))
+		day = day_result.group(0).strip(' ')
+		if day == '1er':
+			day = '01'
+		elif len(day) == 1:
+			day = '0' + day
+	else:
+		day = '00'
+
+	if type(year) is unicode:
+		year = year.encode('utf-8')
+
+	if type(day) is unicode:
+		day = day.encode('utf-8')
+	
+	if not year:
+		return None
+	else:
+		return readDate(year+month+day).date().isoformat()
+
+def extractVolumeNumber(text_string):
+	volume_result = re.search(r'(vol|n)\. ([0-9]|[ivx])*,',text_string)
+	if volume_result:
+		print(volume_result.group(0))
+		volume_number = volume_result.group(0)[volume_result.group(0).find('.')+2:-1]
+		return volume_number
+	else:
+		return None
+
+def getPages(text_string):
+	print(text_string)
+	page_results = re.search(r'p\. [0-9]+(-|:)?[0-9]*(, [0-9]+(-|:)?[0-9]*)*',text_string)
+	if page_results:
+		page_results_string = page_results.group(0)
+		print(page_results.group(0))
+
+		first_dash = page_results_string.find('-')
+		first_colon = page_results_string.find(':')
+		first_comma = page_results_string.find(',')
+
+		if first_dash < 0 and first_colon < 0 and first_comma < 0:
+			first_page = page_results_string[3:]
+		elif first_dash > 0 and (first_dash < first_colon or first_colon < 0) and (first_dash < first_comma or first_comma < 0):
+			first_page = page_results_string[3:first_dash]
+		elif first_colon > 0 and (first_colon < first_dash or first_dash < 0) and (first_colon < first_comma or first_comma < 0):
+			first_page = page_results_string[3:first_colon]
+		elif first_comma > 0 and (first_comma < first_dash or first_dash < 0) and (first_comma < first_colon or first_colon < 0):
+			first_page = page_results_string[3:first_comma]
+		else:
+			first_page = None
+
+		print(first_page)
+
+		last_dash = page_results_string.rfind('-')
+		last_colon = page_results_string.rfind(':')
+		last_comma = page_results_string.rfind(',')
+
+		if last_dash < 0 and last_colon < 0 and last_comma < 0:
+			last_page = None
+		elif last_dash >= first_dash and last_dash > last_colon and last_dash > last_comma:
+			last_page = page_results_string[last_dash+1:]
+		elif last_colon >= first_colon and last_colon > last_dash and last_colon > last_comma:
+			last_page = page_results_string[last_colon+1:]
+		elif last_comma >= first_comma and last_comma > last_dash and last_comma > last_colon:
+			last_page = page_results_string[last_comma+1:]
+
+		print(last_page)
+
+		return first_page, last_page
+
+	return None, None
+
 def generateCitation(bibl_root):
 	new_citation = {}
 	new_titles = bibl_root.xpath('.//title')
+	title_counter = 0
 	for title in new_titles:
 		new_types = title.xpath('./@type')
 		new_levels = title.xpath('./@level')
-		if ('es' in new_types or 're' in new_types) or 'a' in new_levels:
-			new_citation['headline'] = title.xpath('./text()')[0]
-			new_citation['@type'] = 'Text'
-		else:
-			new_citation['name'] = title.xpath('./text()')[0]
-			new_citation['@type'] = 'CreativeWork'
+#		if ('es' in new_types or 're' in new_types) or 'a' in new_levels:
+#			new_citation['headline'] = title.xpath('./text()')[0]
+#			new_citation['@type'] = 'Text'
+#		else:
+#			new_citation['name'] = title.xpath('./text()')[0]
+#			new_citation['@type'] = 'CreativeWork'
 
+		if title_counter > 0:
+			print("Multiple Titles")
+			text_data = max([ x.strip() for x in bibl_root.xpath('./text()') ],key=len)
+			if 'j' in new_levels:
+				new_citation['isPartOf'] = { '@type': 'PublicationIssue' }
+				new_citation['isPartOf']['name'] = title.xpath('./text()')[0]
+				print(new_citation['isPartOf']['name'])
+				date_created = extractDate(text_data)
+				if date_created:
+					new_citation['isPartOf']['dateCreated'] = date_created
+				volume_number = extractVolumeNumber(text_data)
+				if volume_number:
+					new_citation['isPartOf']['issueNumber'] = volume_number
+			else:
+				new_citation['isPartOf'] = { '@type': 'PublicationVolume' }
+				date_published = extractDate(text_data)
+				if date_published:
+					new_citation['isPartOf']['datePublished'] = date_published
+				volume_number = extractVolumeNumber(text_data)
+				if volume_number:
+					new_citation['isPartOf']['volumeNumber'] = volume_number
+			
+			page_start, page_end = getPages(text_data)
+			if page_start:
+				new_citation['isPartOf']['pageStart'] = page_start
+			if page_end:
+				new_citation['isPartOf']['pageEnd'] = page_end
+		else:
+			if ('es' in new_types or 're' in new_types) or 'a' in new_levels:
+				new_citation['headline'] = title.xpath('./text()')[0]
+				new_citation['@type'] = 'Text'
+			else:
+				new_citation['name'] = title.xpath('./text()')[0]
+				new_citation['@type'] = 'CreativeWork'
+
+		title_counter += 1
 
 	return new_citation
 
@@ -53,7 +195,8 @@ def processTEIFile(tei_file):
 	card_type = tei_file[tei_file.rfind('/')+1:][0]
 	if card_type == 's' or card_type == 'p':
 		#bibliography
-		pass
+		output_card['@id'] = root.xpath('/TEI/@xml:id')[0]
+		output_card['@type'] = 'Dataset'
 	else:
 		#chronology
 		output_card['@id'] = root.xpath('/TEI/@xml:id')[0]
@@ -62,18 +205,30 @@ def processTEIFile(tei_file):
 		output_card['inLanguage'] = 'fr'
 		output_card['temporalCoverage'] = readDate(root.xpath('//head/date/@value')[0]).date().isoformat()
 		
-		output_card['mentions'] = map((lambda x: { '@type': 'CreativeWork', 'title': x }),root.xpath('//div1//p/title/text()') + root.xpath('//div1//note/title/text()'))
+		output_card['mentions'] = [ { '@type': 'CreativeWork', 'title': x } for x in root.xpath('//div1//p/title/text()') + root.xpath('//div1//note/title/text()') ]
 		if len(output_card['mentions']) == 1:
 			output_card['mentions'] = output_card['mentions'][0]
 		elif len(output_card['mentions']) == 0:
 			del output_card['mentions']
 
-#		print(tei_file,root.xpath('//div1//bibl'))
-		output_card['citation'] = map(generateCitation,root.xpath('//div1//bibl'))
-	#	if len(output_card['citation']) == 1:
-	#		output_card['citation'] = output_card['citation'][0]
-	#	elif len(output_card['citation']) == 0:
-	#		del output_card['citation']
+#		output_card['citation'] = []
+#		bibl_counter = 0
+#		for y in root.xpath('//div1//bibl'):
+#			if bibl_counter > 0:
+#				output_card['citation'].append(generateCitation(y,False))
+#			else:
+#				output_card['citation'].append(generateCitation(y,True))
+#
+#			bibl_counter += 1
+		output_card['citation'] = [ generateCitation(y) for y in root.xpath('//div1//bibl') ]
+#		output_card['citation'] = [ z for z in output_card['citation'] if len(z) > 0 ]
+		if len(output_card['citation']) == 1:
+			output_card['citation'] = output_card['citation'][0]
+		elif len(output_card['citation']) == 0:
+			del output_card['citation']
+
+		if 'citation' in output_card:
+			print(output_card['@id'])
 
 
 	return json.dumps(output_card,indent=4)
