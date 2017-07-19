@@ -13,6 +13,8 @@ def readDate(target_date):
 #	print(target_date)
 	if len(target_date) == 4:
 		format = '%Y'
+	elif len(target_date) == 6:
+		format = '%Y%m'
 	elif target_date[6:] == '00' and target_date[4:6] == '00':
 		format = '%Y0000'
 	elif target_date[6:] == '00':
@@ -81,49 +83,66 @@ def extractVolumeNumber(text_string):
 		return None
 
 def getPages(text_string):
-	print(text_string)
-	page_results = re.search(r'p\. [0-9]+(-|:)?[0-9]*(, [0-9]+(-|:)?[0-9]*)*',text_string)
+	page_results = re.search(r'p\. ([0-9]*:)?[0-9]+-?[0-9]*(, ([0-9]*:)?[0-9]+-?[0-9]*)*',text_string)
 	if page_results:
-		page_results_string = page_results.group(0)
-		print(page_results.group(0))
+		page_results_string = page_results.group(0)[3:]
 
 		first_dash = page_results_string.find('-')
 		first_colon = page_results_string.find(':')
 		first_comma = page_results_string.find(',')
 
+		#cases:
+		#p. #:#  		X
+		#p. #:#- 		X
+		#p. #:#, 		X
+		#p. #-			X
+		#p. #,			X
+		#p. #    		X
+		#Null cases     X
+
 		if first_dash < 0 and first_colon < 0 and first_comma < 0:
-			first_page = page_results_string[3:]
-		elif first_dash > 0 and (first_dash < first_colon or first_colon < 0) and (first_dash < first_comma or first_comma < 0):
-			first_page = page_results_string[3:first_dash]
-		elif first_colon > 0 and (first_colon < first_dash or first_dash < 0) and (first_colon < first_comma or first_comma < 0):
-			first_page = page_results_string[3:first_colon]
-		elif first_comma > 0 and (first_comma < first_dash or first_dash < 0) and (first_comma < first_colon or first_colon < 0):
-			first_page = page_results_string[3:first_comma]
+			first_page = page_results_string
+		if first_colon > 0 and ((first_colon < first_dash or first_colon < first_comma) or (first_dash < 0 and first_comma < 0)):
+			if (first_comma < 0 and first_dash > 0) or (first_dash > 0 and first_dash < first_comma):
+				first_page = page_results_string[first_colon+1:first_dash]
+			elif (first_dash < 0 and first_comma > 0) or (first_comma > 0 and first_comma < first_dash):
+				first_page = page_results_string[first_colon+1:first_comma]
+			else:
+				first_page = page_results_string[first_colon+1:]
+		elif first_colon < 0 or (first_dash > 0 and first_dash < first_colon) or (first_comma > 0 and first_comma < first_colon):
+			if (first_dash < first_comma and first_dash > 0) or (first_dash > 0 and first_comma < 0):
+				first_page = page_results_string[:first_dash]
+			elif (first_comma < first_dash and first_comma > 0) or (first_comma > 0 and first_dash < 0):
+				first_page = page_results_string[:first_comma]
 		else:
 			first_page = None
-
-		print(first_page)
 
 		last_dash = page_results_string.rfind('-')
 		last_colon = page_results_string.rfind(':')
 		last_comma = page_results_string.rfind(',')
 
+		#cases:
+		# -#
+		# , #
+		# , #:#
+
 		if last_dash < 0 and last_colon < 0 and last_comma < 0:
 			last_page = None
 		elif last_dash >= first_dash and last_dash > last_colon and last_dash > last_comma:
 			last_page = page_results_string[last_dash+1:]
-		elif last_colon >= first_colon and last_colon > last_dash and last_colon > last_comma:
-			last_page = page_results_string[last_colon+1:]
-		elif last_comma >= first_comma and last_comma > last_dash and last_comma > last_colon:
-			last_page = page_results_string[last_comma+1:]
-
-		print(last_page)
+		elif last_comma >= first_comma and last_comma > last_dash:
+			if last_colon > last_comma:
+				last_page = page_results_string[last_colon+1:]
+			else:
+				last_page = page_results_string[last_comma+2:]
+		else:
+			last_page = None
 
 		return first_page, last_page
 
 	return None, None
 
-def generateCitation(bibl_root):
+def generateChronologyCitation(bibl_root):
 	new_citation = {}
 	new_titles = bibl_root.xpath('.//title')
 	title_counter = 0
@@ -176,6 +195,73 @@ def generateCitation(bibl_root):
 
 	return new_citation
 
+def generateBibCitation(bibl_root):
+	new_citation = {}
+	new_titles = bibl_root.xpath('.//title')
+	title_counter = 0
+
+	dates = bibl_root.xpath('./date/@when')
+	new_citation['dateCreated'] = readDate(dates[0]).date().isoformat()
+
+	for title in new_titles:
+		new_types = title.xpath('./@type')
+		new_levels = title.xpath('./@level')
+
+		if title_counter > 0:
+			print("Multiple Titles")
+			text_data = max([ x.strip() for x in bibl_root.xpath('./text()') ],key=len)
+
+			if 'j' in new_levels:
+				new_citation['isPartOf'] = { '@type': 'PublicationIssue' }
+				new_citation['isPartOf']['name'] = title.xpath('./rs/text()')[0]
+
+				new_issue_number = bibl_root.xpath('./biblScope[@type="issue"]/text()')
+				if new_issue_number:
+					new_citation['isPartOf']['issueNumber'] = new_issue_number[0]
+
+				pub_place = bibl_root.xpath('./pubPlace/text()')
+				if pub_place:
+					new_citation['locationCreated'] = pub_place[0]
+
+				new_publisher = bibl_root.xpath('./publisher/text()')
+				if new_publisher:
+					new_citation['publisher'] = new_publisher[0]
+
+				new_date_published = bibl_root.xpath('./date/@when')
+				if new_date_published:
+					new_citation['datePublished'] = readDate(new_date_published[0]).date().isoformat()
+
+#				new_volume_number = bibl_root.xpath('./biblScope[@type="vol"]/text()')
+#				if new_volume_number:
+#					print(new_volume_number[0])
+			else:
+				new_citation['isPartOf'] = { '@type': 'PublicationVolume' }
+
+				new_volume_number = bibl_root.xpath('./biblScope[@type="vol"]/text()')
+				if new_volume_number:
+					new_citation['isPartOf']['volumeNumber'] = new_volume_number[0]
+
+			new_pages = bibl_root.xpath('./biblScope[@type="pages"]/text()')
+			if new_pages:
+#				print(new_pages[0])
+#				print(getPages(new_pages[0]))
+				page_start, page_end = getPages(new_pages[0])
+				if page_start:
+					new_citation['isPartOf']['pageStart'] = page_start
+				if page_end:
+					new_citation['isPartOf']['pageEnd'] = page_end
+
+		else:
+			new_citation['@type'] = 'CreativeWork'
+			if ('es' in new_types or 're' in new_types) or 'a' in new_levels:
+				new_citation['headline'] = title.xpath('./rs/text()')[0]
+			else:
+				new_citation['name'] = title.xpath('./rs/text()')[0]
+
+		title_counter += 1
+
+	return new_citation
+
 def processTEIFile(tei_file):
 	with open(tei_file,'rb') as infile:
 		card = infile.read()
@@ -197,6 +283,33 @@ def processTEIFile(tei_file):
 		#bibliography
 		output_card['@id'] = root.xpath('/TEI/@xml:id')[0]
 		output_card['@type'] = 'Dataset'
+		output_card['author'] = { '@type': 'Person', '@id': 'http://viaf.org/viaf/44300868'}
+		print(output_card['@id'])
+#		print(root.xpath('/TEI/teiHeader/fileDesc/titleStmt/title/text()')[1])
+#		print(root.xpath('/TEI/teiHeader/fileDesc/editionStmt/edition/date/@when')[0])
+		output_card['dateCreated'] = readDate(root.xpath('/TEI/teiHeader/fileDesc/editionStmt/edition/date/@when')[0]).date().isoformat()
+		output_card['temporalCoverage'] = readDate(root.xpath('/TEI/text/body/div1/head/date/@when')[0]).date().isoformat()
+
+		output_card['mentions'] = [ { '@type': 'CreativeWork', 'title': x } for x in root.xpath('/TEI/text/body/div2/p/title/rs/text()') + root.xpath('/TEI/text/body/div2/note/title/rs/text()') ]
+		print(output_card['mentions'])
+		if len(output_card['mentions']) == 1:
+			output_card['mentions'] = output_card['mentions'][0]
+		elif len(output_card['mentions']) == 0:
+			del output_card['mentions']
+
+		if 'mentions' in output_card:
+			print(output_card['mentions'])
+
+		output_card['citation'] = [ generateBibCitation(y) for y in root.xpath('//div2/bibl') + root.xpath('//div2/p/bibl') + root.xpath('//div2/note/bibl') ]
+		print(output_card['citation'])
+		output_card['citation'] = [ z for z in output_card['citation'] if len(z) > 0 ]
+		if len(output_card['citation']) == 1:
+			output_card['citation'] = output_card['citation'][0]
+		elif len(output_card['citation']) == 0:
+			del output_card['citation']
+
+		if 'citation' in output_card:
+			print(output_card['@id'])
 	else:
 		#chronology
 		output_card['@id'] = root.xpath('/TEI/@xml:id')[0]
@@ -211,17 +324,8 @@ def processTEIFile(tei_file):
 		elif len(output_card['mentions']) == 0:
 			del output_card['mentions']
 
-#		output_card['citation'] = []
-#		bibl_counter = 0
-#		for y in root.xpath('//div1//bibl'):
-#			if bibl_counter > 0:
-#				output_card['citation'].append(generateCitation(y,False))
-#			else:
-#				output_card['citation'].append(generateCitation(y,True))
-#
-#			bibl_counter += 1
-		output_card['citation'] = [ generateCitation(y) for y in root.xpath('//div1//bibl') ]
-#		output_card['citation'] = [ z for z in output_card['citation'] if len(z) > 0 ]
+		output_card['citation'] = [ generateChronologyCitation(y) for y in root.xpath('//div1//bibl') ]
+		output_card['citation'] = [ z for z in output_card['citation'] if len(z) > 0 ]
 		if len(output_card['citation']) == 1:
 			output_card['citation'] = output_card['citation'][0]
 		elif len(output_card['citation']) == 0:
