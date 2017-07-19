@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import os, json, datetime, re
+import os, json, datetime, re, csv
 from shutil import copyfile
 from lxml import etree
 from unicodedata import normalize
@@ -24,6 +24,7 @@ def readDate(target_date):
 	return datetime.datetime.strptime(target_date,format)
 
 def extractDate(text_string):
+	print("EXTRACTING DATE")
 	print(text_string)
 	year_results = re.search(r'[12][890][0-9][0-9]',text_string)
 	year = None
@@ -142,10 +143,14 @@ def getPages(text_string):
 
 	return None, None
 
-def generateChronologyCitation(bibl_root):
+def generateChronologyCitation(bibl_root,linked_names):
 	new_citation = {}
 	new_titles = bibl_root.xpath('.//title')
 	title_counter = 0
+	new_author = bibl_root.xpath('.//author/name/@key')
+	if new_author:
+		new_citation['author'] = { '@type': 'Person', '@id': 'catalogdata.library.illinois.edu/lod/entries/Persons/kp/' + new_author[0] }
+
 	for title in new_titles:
 		new_types = title.xpath('./@type')
 		new_levels = title.xpath('./@level')
@@ -184,21 +189,33 @@ def generateChronologyCitation(bibl_root):
 			if page_end:
 				new_citation['isPartOf']['pageEnd'] = page_end
 		else:
+			new_citation['@type'] = 'CreativeWork'
 			if ('es' in new_types or 're' in new_types) or 'a' in new_levels:
 				new_citation['headline'] = title.xpath('./text()')[0]
-				new_citation['@type'] = 'Text'
 			else:
 				new_citation['name'] = title.xpath('./text()')[0]
-				new_citation['@type'] = 'CreativeWork'
 
 		title_counter += 1
 
 	return new_citation
 
-def generateBibCitation(bibl_root):
+def generateBibCitation(bibl_root,linked_names):
 	new_citation = {}
 	new_titles = bibl_root.xpath('.//title')
 	title_counter = 0
+	new_author = bibl_root.xpath('.//author/name/@key')
+	if new_author:
+		new_citation['author'] = { '@type': 'Person', '@id': 'catalogdata.library.illinois.edu/lod/entries/Persons/kp/' + new_author[0] }
+	else:
+		new_authors = bibl_root.xpath('.//author/name/text()')
+		if new_authors:
+			for author in new_authors:
+				if author in linked_names[1]:
+					new_citation['author'] = { '@type': 'Person', '@id': 'catalogdata.library.illinois.edu/lod/entries/Persons/kp/' + linked_names[0][linked_names[1].index(author)] }
+					print("FOUND AUTHOR IN CITATION")
+					print(author)
+					print(linked_names[0][linked_names[1].index(author)])
+
 
 	dates = bibl_root.xpath('./date/@when')
 	new_citation['dateCreated'] = readDate(dates[0]).date().isoformat()
@@ -262,7 +279,7 @@ def generateBibCitation(bibl_root):
 
 	return new_citation
 
-def processTEIFile(tei_file):
+def processTEIFile(tei_file,linked_names):
 	with open(tei_file,'rb') as infile:
 		card = infile.read()
 
@@ -291,6 +308,7 @@ def processTEIFile(tei_file):
 		output_card['temporalCoverage'] = readDate(root.xpath('/TEI/text/body/div1/head/date/@when')[0]).date().isoformat()
 
 		output_card['mentions'] = [ { '@type': 'CreativeWork', 'title': x } for x in root.xpath('/TEI/text/body/div2/p/title/rs/text()') + root.xpath('/TEI/text/body/div2/note/title/rs/text()') ]
+		output_card['mentions'] += [ { '@type': 'Person', '@id': 'catalogdata.library.illinois.edu/lod/entries/Persons/kp/' + x } for x in root.xpath('/TEI/text/body/div2/p/name/@key') + root.xpath('/TEI/text/body/div2/note/name/@key') if x in linked_names[0] ]
 		print(output_card['mentions'])
 		if len(output_card['mentions']) == 1:
 			output_card['mentions'] = output_card['mentions'][0]
@@ -300,7 +318,7 @@ def processTEIFile(tei_file):
 		if 'mentions' in output_card:
 			print(output_card['mentions'])
 
-		output_card['citation'] = [ generateBibCitation(y) for y in root.xpath('//div2/bibl') + root.xpath('//div2/p/bibl') + root.xpath('//div2/note/bibl') ]
+		output_card['citation'] = [ generateBibCitation(y,linked_names) for y in root.xpath('//div2/bibl') + root.xpath('//div2/p/bibl') + root.xpath('//div2/note/bibl') ]
 		print(output_card['citation'])
 		output_card['citation'] = [ z for z in output_card['citation'] if len(z) > 0 ]
 		if len(output_card['citation']) == 1:
@@ -319,12 +337,14 @@ def processTEIFile(tei_file):
 		output_card['temporalCoverage'] = readDate(root.xpath('//head/date/@value')[0]).date().isoformat()
 		
 		output_card['mentions'] = [ { '@type': 'CreativeWork', 'title': x } for x in root.xpath('//div1//p/title/text()') + root.xpath('//div1//note/title/text()') ]
+		output_card['mentions'] += [ { '@type': 'Person', '@id': 'catalogdata.library.illinois.edu/lod/entries/Persons/kp/' + x } for x in root.xpath('//div1//p/name/@key') + root.xpath('//div1//note/name/@key') if x in linked_names[0] ]
+#		output_card['mentions'] += [ { '@type': 'Person', '@id': 'catalogdata.library.illinois.edu/lod/entries/Persons/kp/' + linked_names[0][linked_names[1].index(x)] } for x in root.xpath('//div1//p/name/text()') + root.xpath('//div1//note/name/text()') if x in linked_names[1] ]
 		if len(output_card['mentions']) == 1:
 			output_card['mentions'] = output_card['mentions'][0]
 		elif len(output_card['mentions']) == 0:
 			del output_card['mentions']
 
-		output_card['citation'] = [ generateChronologyCitation(y) for y in root.xpath('//div1//bibl') ]
+		output_card['citation'] = [ generateChronologyCitation(y,linked_names) for y in root.xpath('//div1//bibl') ]
 		output_card['citation'] = [ z for z in output_card['citation'] if len(z) > 0 ]
 		if len(output_card['citation']) == 1:
 			output_card['citation'] = output_card['citation'][0]
@@ -371,7 +391,7 @@ def writeNewFile(file_path,copy=False,file_contents=None):
 			writefile.write(file_contents)
 
 
-def traverseFullTree(processorFunction):
+def traverseFullTree(processorFunction,linked_names):
 	rootdir = 'tei'
 	results_folder, results_folder_name = makeOutputFolder('json',None)
 
@@ -381,9 +401,23 @@ def traverseFullTree(processorFunction):
 				if 'dc.xml' in name:
 					writeNewFile(results_folder_name+root[3:]+SLASH+name,copy=True)
 				else:
-					writeNewFile(results_folder_name+root[3:]+SLASH+name[:-3]+'json',file_contents=processorFunction(root+SLASH+name))
+					writeNewFile(results_folder_name+root[3:]+SLASH+name[:-3]+'json',file_contents=processorFunction(root+SLASH+name,linked_names))
+
+def getNameData():
+	linked_name_keys = []
+	linked_names = []
+	with open('KolbProustNameData.csv','rU') as readfile:
+		headerReader = csv.reader(readfile)
+		header = next(headerReader)
+		name_reader = csv.DictReader(readfile,header,delimiter=',');
+		for name in name_reader:
+			linked_name_keys.append(name['KeyCode'])
+			linked_names.append(name['FullName'])
+
+	return [linked_name_keys, linked_names]
 
 def main():
-	traverseFullTree(processTEIFile)
+	linked_names = getNameData()
+	traverseFullTree(processTEIFile,linked_names)
 
 main()
