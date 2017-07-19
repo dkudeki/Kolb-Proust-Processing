@@ -401,6 +401,7 @@ def traverseFullTree(processorFunction,linked_names):
 				if 'dc.xml' in name:
 					writeNewFile(results_folder_name+root[3:]+SLASH+name,copy=True)
 				else:
+					writeNewFile(results_folder_name+root[3:]+SLASH+name,copy=True)
 					writeNewFile(results_folder_name+root[3:]+SLASH+name[:-3]+'json',file_contents=processorFunction(root+SLASH+name,linked_names))
 
 def getNameData():
