@@ -14,13 +14,26 @@ def readDate(target_date):
 	if len(target_date) == 4:
 		format = '%Y'
 	elif len(target_date) == 6:
-		format = '%Y%m'
+		if int(target_date[4:6]) <= 12:
+			format = '%Y%m'
+		else:
+			format = '%Y%d'
 	elif target_date[6:] == '00' and target_date[4:6] == '00':
 		format = '%Y0000'
+	elif target_date[4:6] == '00' and target_date[6:] != '00':
+		format = '%Y00%d'
 	elif target_date[6:] == '00':
-		format = '%Y%m00'
+		if int(target_date[4:6]) <= 12:
+			format = '%Y%m00'
+		else:
+			format = '%Y%d00'
 	else:
-		format = '%Y%m%d'
+		if int(target_date[4:6]) <= 12:
+			format = '%Y%m%d'
+		else:
+			format = '%Y%d%m'
+
+	print(target_date)
 	return datetime.datetime.strptime(target_date,format)
 
 def extractDate(text_string):
@@ -304,8 +317,14 @@ def processTEIFile(tei_file,linked_names):
 		print(output_card['@id'])
 #		print(root.xpath('/TEI/teiHeader/fileDesc/titleStmt/title/text()')[1])
 #		print(root.xpath('/TEI/teiHeader/fileDesc/editionStmt/edition/date/@when')[0])
-		output_card['dateCreated'] = readDate(root.xpath('/TEI/teiHeader/fileDesc/editionStmt/edition/date/@when')[0]).date().isoformat()
-		output_card['temporalCoverage'] = readDate(root.xpath('/TEI/text/body/div1/head/date/@when')[0]).date().isoformat()
+		if root.xpath('/TEI/teiHeader/fileDesc/editionStmt/edition/date/@when'):
+			output_card['dateCreated'] = readDate(root.xpath('/TEI/teiHeader/fileDesc/editionStmt/edition/date/@when')[0]).date().isoformat()
+		elif root.xpath('/TEI/teiHeader/fileDesc/editionStmt/edition/date/@value'):
+			output_card['dateCreated'] = readDate(root.xpath('/TEI/teiHeader/fileDesc/editionStmt/edition/date/@value')[0]).date().isoformat()
+		if root.xpath('/TEI/text/body/div1/head/date/@when'):
+			output_card['temporalCoverage'] = readDate(root.xpath('/TEI/text/body/div1/head/date/@when')[0]).date().isoformat()
+		elif root.xpath('/TEI/text/body/div1/head/date/@value'):
+			output_card['temporalCoverage'] = readDate(root.xpath('/TEI/text/body/div1/head/date/@value')[0]).date().isoformat()
 
 		output_card['mentions'] = [ { '@type': 'CreativeWork', 'title': x } for x in root.xpath('/TEI/text/body/div2/p/title/rs/text()') + root.xpath('/TEI/text/body/div2/note/title/rs/text()') ]
 		output_card['mentions'] += [ { '@type': 'Person', '@id': 'catalogdata.library.illinois.edu/lod/entries/Persons/kp/' + x } for x in root.xpath('/TEI/text/body/div2/p/name/@key') + root.xpath('/TEI/text/body/div2/note/name/@key') if x in linked_names[0] ]
@@ -334,7 +353,10 @@ def processTEIFile(tei_file,linked_names):
 		output_card['@type'] = 'Dataset'
 		output_card['author'] = { '@type': 'Person', '@id': 'http://viaf.org/viaf/44300868'}
 		output_card['inLanguage'] = 'fr'
-		output_card['temporalCoverage'] = readDate(root.xpath('//head/date/@value')[0]).date().isoformat()
+		if root.xpath('//head/date/@value'):
+			output_card['temporalCoverage'] = readDate(root.xpath('//head/date/@value')[0]).date().isoformat()
+		elif root.xpath('//head/date/@when'):
+			output_card['temporalCoverage'] = readDate(root.xpath('//head/date/@when')[0]).date().isoformat()
 		
 		output_card['mentions'] = [ { '@type': 'CreativeWork', 'title': x } for x in root.xpath('//div1//p/title/text()') + root.xpath('//div1//note/title/text()') ]
 		output_card['mentions'] += [ { '@type': 'Person', '@id': 'catalogdata.library.illinois.edu/lod/entries/Persons/kp/' + x } for x in root.xpath('//div1//p/name/@key') + root.xpath('//div1//note/name/@key') if x in linked_names[0] ]
@@ -352,7 +374,7 @@ def processTEIFile(tei_file,linked_names):
 			del output_card['citation']
 
 		if 'citation' in output_card:
-			print(output_card['@id'])
+			print(tei_file)
 
 
 	return json.dumps(output_card,indent=4)
