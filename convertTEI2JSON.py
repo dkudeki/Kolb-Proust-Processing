@@ -14,24 +14,36 @@ def readDate(target_date):
 	if len(target_date) == 4:
 		format = '%Y'
 	elif len(target_date) == 6:
-		if int(target_date[4:6]) <= 12:
+		if target_date[4:6] == '00':
+			format = '%Y00'
+		elif int(target_date[4:6]) <= 12:
 			format = '%Y%m'
 		else:
 			format = '%Y%d'
-	elif target_date[6:] == '00' and target_date[4:6] == '00':
-		format = '%Y0000'
-	elif target_date[4:6] == '00' and target_date[6:] != '00':
-		format = '%Y00%d'
-	elif target_date[6:] == '00':
-		if int(target_date[4:6]) <= 12:
-			format = '%Y%m00'
+	elif len(target_date) == 8:
+		if target_date[6:] == '00' and target_date[4:6] == '00':
+			format = '%Y0000'
+		elif target_date[4:6] == '00' and target_date[6:] != '00':
+			format = '%Y00%d'
+		elif target_date[6:] == '00':
+			if int(target_date[4:6]) <= 12:
+				format = '%Y%m00'
+			else:
+				format = '%Y%d00'
 		else:
-			format = '%Y%d00'
+			if int(target_date[4:6]) <= 12:
+				format = '%Y%m%d'
+			else:
+				format = '%Y%d%m'
 	else:
-		if int(target_date[4:6]) <= 12:
-			format = '%Y%m%d'
-		else:
-			format = '%Y%d%m'
+		if len(target_date) > 8:
+			return readDate(target_date[:8])
+		elif len(target_date) > 6:
+			return readDate(target_date[:6])
+		elif len(target_date) > 4:
+			format = '%Y'
+		elif len(target_date) > 2:
+			format = '%y'
 
 	print(target_date)
 	return datetime.datetime.strptime(target_date,format)
