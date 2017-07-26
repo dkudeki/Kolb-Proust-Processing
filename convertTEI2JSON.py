@@ -66,9 +66,9 @@ def extractDateFromText(text_string):
 	else:
 		month = '00'
 
-	thirty_one_day_re = r' (1er|[1-9]|[12][0-9]|3[01]) '
-	thirty_day_re = r' (1er|[1-9]|[12][0-9]|30) '
-	twenty_nine_day_re = r' (1er|[1-9]|[12][0-9]) '
+	thirty_one_day_re = r'( )?(1er|[1-9]|[12][0-9]|3[01]) '
+	thirty_day_re = r'( )?(1er|[1-9]|[12][0-9]|30) '
+	twenty_nine_day_re = r'( )?(1er|[1-9]|[12][0-9]) '
 
 	day = None
 	if month in ['01','03','05','07','08','10','12']:
@@ -242,6 +242,12 @@ def getDate(root,path):
 						return extractDateFromText(text_dates[0])
 					else:
 						return None
+			else:
+				text_dates = root.xpath(path + 'text()')
+				if text_dates:
+					return extractDateFromText(text_dates[0])
+				else:
+					return None
 	else:
 		value_dates = root.xpath(path + '@value')
 		if value_dates:
