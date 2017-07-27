@@ -58,7 +58,7 @@ def extractDateFromText(text_string):
 		print(year_results.group(0))
 
 	month = None
-	month_results = re.search(ur'(janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre)',normalize('NFC',(text_string.lower().decode('utf-8') if type(text_string) is str else text_string.lower())))
+	month_results = re.search(ur'(janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre)',normalize('NFC',(text_string.lower().decode('utf-8') if isinstance(text_string,str) else text_string.lower())))
 	months = {u'janvier': '01',u'février': '02',u'mars': '03',u'avril': '04',u'mai': '05',u'juin': '06',u'juillet': '07',u'août': '08',u'septembre': '09',u'octobre': '10',u'novembre': '11',u'décembre': '12'}
 	if month_results:
 		month = months[month_results.group(0)]
@@ -269,6 +269,17 @@ def getDate(root,path):
 			else:
 				return None
 
+def getTitle(root,path):
+	rs_title = root.xpath(path+'rs/text()')
+	if rs_title:
+		return rs_title[0]
+	else:
+		title = root.xpath(path+'text()')
+		if title:
+			return title[0]
+		else:
+			return None
+
 def generateBibCitation(bibl_root,linked_names):
 	new_citation = {}
 	new_titles = bibl_root.xpath('.//title')
@@ -300,7 +311,9 @@ def generateBibCitation(bibl_root,linked_names):
 
 			if 'j' in new_levels:
 				new_citation['isPartOf'] = { '@type': 'PublicationIssue' }
-				new_citation['isPartOf']['name'] = title.xpath('./rs/text()')[0]
+				new_citation['isPartOf']['name'] = getTitle(title,'./')
+				if not new_citation['isPartOf']['name']:
+					del new_citation['isPartOf']['name']
 
 				new_issue_number = bibl_root.xpath('./biblScope[@type="issue"]/text()')
 				if new_issue_number:
@@ -341,9 +354,13 @@ def generateBibCitation(bibl_root,linked_names):
 		else:
 			new_citation['@type'] = 'CreativeWork'
 			if ('es' in new_types or 're' in new_types) or 'a' in new_levels:
-				new_citation['headline'] = title.xpath('./rs/text()')[0]
+				new_citation['headline'] = getTitle(title,'./')
+				if not new_citation['headline']:
+					del new_citation['headline']
 			else:
-				new_citation['name'] = title.xpath('./rs/text()')[0]
+				new_citation['name'] = getTitle(title,'./')
+				if not new_citation['name']:
+					del new_citation['name']
 
 		title_counter += 1
 
@@ -389,7 +406,7 @@ def processTEIFile(tei_file,linked_names):
 #		elif root.xpath('/TEI/text/body/div1/head/date/@value'):
 #			output_card['temporalCoverage'] = readFormattedDate(root.xpath('/TEI/text/body/div1/head/date/@value')[0]).date().isoformat()
 
-		output_card['mentions'] = [ { '@type': 'CreativeWork', 'title': x } for x in root.xpath('/TEI/text/body/div2/p/title/rs/text()') + root.xpath('/TEI/text/body/div2/note/title/rs/text()') ]
+		output_card['mentions'] = [ { '@type': 'CreativeWork', 'title': x } for x in ( root.xpath('/TEI/text/body/div2/p/title/rs/text()') + root.xpath('/TEI/text/body/div2/note/title/rs/text()') if len(root.xpath('/TEI/text/body/div2/p/title/rs/text()') + root.xpath('/TEI/text/body/div2/note/title/rs/text()')) > 0 else root.xpath('/TEI/text/body/div2/p/title/text()') + root.xpath('/TEI/text/body/div2/note/title/text()') ) ]
 		output_card['mentions'] += [ { '@type': 'Person', '@id': 'catalogdata.library.illinois.edu/lod/entries/Persons/kp/' + x } for x in root.xpath('/TEI/text/body/div2/p/name/@key') + root.xpath('/TEI/text/body/div2/note/name/@key') if x in linked_names[0] ]
 		print(output_card['mentions'])
 		if len(output_card['mentions']) == 1:
