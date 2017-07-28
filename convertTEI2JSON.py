@@ -310,14 +310,27 @@ def generateBibCitation(bibl_root,linked_names):
 			text_data = max([ x.strip() for x in bibl_root.xpath('./text()') ],key=len)
 
 			if 'j' in new_levels:
-				new_citation['isPartOf'] = { '@type': 'PublicationIssue' }
-				new_citation['isPartOf']['name'] = getTitle(title,'./')
-				if not new_citation['isPartOf']['name']:
-					del new_citation['isPartOf']['name']
-
 				new_issue_number = bibl_root.xpath('./biblScope[@type="issue"]/text()')
 				if new_issue_number:
-					new_citation['isPartOf']['issueNumber'] = new_issue_number[0]
+					if 'isPartOf' not in new_citation:
+						new_citation['isPartOf'] = { '@type': 'PublicationIssue', 'issueNumber' : new_issue_number[0] }
+					elif isinstance(new_citation['isPartOf'],dict):
+						new_citation['isPartOf'] = [ new_citation['isPartOf'], { '@type': 'PublicationIssue', 'issueNumber' : new_issue_number[0] } ]
+					elif isinstance(new_citation['isPartOf'],list):
+						new_citation['isPartOf'].append({ '@type': 'PublicationIssue', 'issueNumber' : new_issue_number[0] })
+
+				new_volume_number = bibl_root.xpath('./biblScope[@type="vol"]/text()')
+				if new_volume_number:
+					if 'isPartOf' not in new_citation:
+						new_citation['isPartOf'] = { '@type': 'PublicationVolume', 'volumeNumber': new_volume_number[0] }
+					elif isinstance(new_citation['isPartOf'],dict):
+						new_citation['isPartOf'] = [ new_citation['isPartOf'], { '@type': 'PublicationVolume', 'volumeNumber': new_volume_number[0] } ]
+					elif isinstance(new_citation['isPartOf'],list):
+						new_citation['isPartOf'].append({ '@type': 'PublicationVolume', 'volumeNumber': new_volume_number[0] })
+
+				new_citation['name'] = getTitle(title,'./')
+				if not new_citation['name']:
+					del new_citation['name']
 
 				pub_place = bibl_root.xpath('./pubPlace/text()')
 				if pub_place:
@@ -347,9 +360,9 @@ def generateBibCitation(bibl_root,linked_names):
 #				print(getPages(new_pages[0]))
 				page_start, page_end = getPages(new_pages[0])
 				if page_start:
-					new_citation['isPartOf']['pageStart'] = page_start
+					new_citation['pageStart'] = page_start
 				if page_end:
-					new_citation['isPartOf']['pageEnd'] = page_end
+					new_citation['pageEnd'] = page_end
 
 		else:
 			new_citation['@type'] = 'CreativeWork'
@@ -388,6 +401,7 @@ def processTEIFile(tei_file,linked_names):
 		output_card['@id'] = root.xpath('/TEI/@xml:id')[0]
 		output_card['@type'] = 'Dataset'
 		output_card['author'] = { '@type': 'Person', '@id': 'http://viaf.org/viaf/44300868'}
+		output_card['inLanguage'] = 'fr'
 		print(output_card['@id'])
 #		print(root.xpath('/TEI/teiHeader/fileDesc/titleStmt/title/text()')[1])
 #		print(root.xpath('/TEI/teiHeader/fileDesc/editionStmt/edition/date/@when')[0])
@@ -406,7 +420,11 @@ def processTEIFile(tei_file,linked_names):
 #		elif root.xpath('/TEI/text/body/div1/head/date/@value'):
 #			output_card['temporalCoverage'] = readFormattedDate(root.xpath('/TEI/text/body/div1/head/date/@value')[0]).date().isoformat()
 
-		output_card['mentions'] = [ { '@type': 'CreativeWork', 'title': x } for x in ( root.xpath('/TEI/text/body/div2/p/title/rs/text()') + root.xpath('/TEI/text/body/div2/note/title/rs/text()') if len(root.xpath('/TEI/text/body/div2/p/title/rs/text()') + root.xpath('/TEI/text/body/div2/note/title/rs/text()')) > 0 else root.xpath('/TEI/text/body/div2/p/title/text()') + root.xpath('/TEI/text/body/div2/note/title/text()') ) ]
+		titles = ( root.xpath('/TEI/text/body/div2/p/title/rs') + root.xpath('/TEI/text/body/div2/note/title/rs') if len(root.xpath('/TEI/text/body/div2/p/title/rs') + root.xpath('/TEI/text/body/div2/note/title/rs')) > 0 else root.xpath('/TEI/text/body/div2/p/title') + root.xpath('/TEI/text/body/div2/note/title') )
+		output_card['mentions'] = []
+		for t in titles:
+			output_card['mentions'].append({ '@type': 'CreativeWork', 'name': t.xpath('normalize-space(.)') })
+#		output_card['mentions'] = [ { '@type': 'CreativeWork', 'title': x } for x in ( root.xpath('/TEI/text/body/div2/p/title/rs[normalize-space()]') + root.xpath('/TEI/text/body/div2/note/title/rs[normalize-space()]') if len(root.xpath('/TEI/text/body/div2/p/title/rs[normalize-space()]') + root.xpath('/TEI/text/body/div2/note/title/rs[normalize-space()]')) > 0 else root.xpath('/TEI/text/body/div2/p/title[normalize-space()]') + root.xpath('/TEI/text/body/div2/note/title[normalize-space()]') ) ]
 		output_card['mentions'] += [ { '@type': 'Person', '@id': 'catalogdata.library.illinois.edu/lod/entries/Persons/kp/' + x } for x in root.xpath('/TEI/text/body/div2/p/name/@key') + root.xpath('/TEI/text/body/div2/note/name/@key') if x in linked_names[0] ]
 		print(output_card['mentions'])
 		if len(output_card['mentions']) == 1:
@@ -441,9 +459,17 @@ def processTEIFile(tei_file,linked_names):
 #		elif root.xpath('//head/date/@when'):
 #			output_card['temporalCoverage'] = readFormattedDate(root.xpath('//head/date/@when')[0]).date().isoformat()
 		
-		output_card['mentions'] = [ { '@type': 'CreativeWork', 'title': x } for x in root.xpath('//div1//p/title/text()') + root.xpath('//div1//note/title/text()') ]
+		titles = root.xpath('//div1//p/title') + root.xpath('//div1//note/title')
+		print(titles)
+		output_card['mentions'] = []
+		for t in titles:
+			output_card['mentions'].append({ '@type': 'CreativeWork', 'name': t.xpath('normalize-space(.)') })
+#			print(t.xpath('normalize-space(.)'))
+#		output_card['mentions'] = [ { '@type': 'CreativeWork', 'title': x } for x in root.xpath('//div1//p/title[normalize-space(.)]') + root.xpath('//div1//note/title[normalize-space(.)]') ]
 		output_card['mentions'] += [ { '@type': 'Person', '@id': 'catalogdata.library.illinois.edu/lod/entries/Persons/kp/' + x } for x in root.xpath('//div1//p/name/@key') + root.xpath('//div1//note/name/@key') if x in linked_names[0] ]
 #		output_card['mentions'] += [ { '@type': 'Person', '@id': 'catalogdata.library.illinois.edu/lod/entries/Persons/kp/' + linked_names[0][linked_names[1].index(x)] } for x in root.xpath('//div1//p/name/text()') + root.xpath('//div1//note/name/text()') if x in linked_names[1] ]
+		print("MENTIONS")
+		print(output_card['mentions'])
 		if len(output_card['mentions']) == 1:
 			output_card['mentions'] = output_card['mentions'][0]
 		elif len(output_card['mentions']) == 0:
@@ -460,7 +486,7 @@ def processTEIFile(tei_file,linked_names):
 			print(tei_file)
 
 
-	return json.dumps(output_card,indent=4)
+	return json.dumps(output_card,indent=4,ensure_ascii=False).encode('utf-8')
 
 def makeOutputFolder(folder_name,counter):
 	try:
