@@ -99,14 +99,24 @@ def extractDateFromText(text_string):
 	else:
 		return readFormattedDate(year+month+day).date().isoformat()
 
-def extractVolumeNumber(text_string):
-	volume_result = re.search(r'(vol|n)\. ([0-9]|[ivx])*,',text_string)
-	if volume_result:
-		print(volume_result.group(0))
-		volume_number = volume_result.group(0)[volume_result.group(0).find('.')+2:-1]
-		return volume_number
+def extractIssueOrVolumeNumber(text_string,mode):
+	if mode == 'volume':
+		result = re.search(r'vol\. ([0-9]|[ivx])*,',text_string)
+	else:
+		result = re.search(r'n\. ([0-9]|[ivx])*,',text_string)
+
+	if result:
+		print(result.group(0))
+		number = result.group(0)[result.group(0).find('.')+2:-1]
+		return number
 	else:
 		return None
+
+def extractIssueNumber(text_string):
+	return extractIssueOrVolumeNumber(text_string,'issue')
+
+def extractVolumeNumber(text_string):
+	return extractIssueOrVolumeNumber(text_string,'volume')
 
 def getPages(text_string):
 	page_results = re.search(r'p\. ([0-9]*:)?[0-9]+-?[0-9]*(, ([0-9]*:)?[0-9]+-?[0-9]*)*',text_string)
@@ -170,11 +180,17 @@ def getPages(text_string):
 
 def generateChronologyCitation(bibl_root,linked_names):
 	new_citation = {}
+#	text_data = max([ x.strip() for x in bibl_root.xpath('./text()') ],key=len)
+	print(bibl_root)
+	text_data = bibl_root.xpath('normalize-space(.)')
+	print("TEXT DATA TEXT DATA TEXT DATA TEXT DATA TEXT DATA TEXT DATA TEXT DATA TEXT DATA TEXT DATA TEXT DATA TEXT DATA TEXT DATA TEXT DATA")
+	print(text_data)
+
 	new_titles = bibl_root.xpath('.//title')
 	title_counter = 0
 	new_author = bibl_root.xpath('.//author/name/@key')
 	if new_author:
-		new_citation['author'] = { '@type': 'Person', '@id': 'catalogdata.library.illinois.edu/lod/entries/Persons/kp/' + new_author[0] }
+		new_citation['author'] = { '@type': 'Person', '@id': 'catalogdata.library.illinois.edu/lod/entities/Persons/kp/' + new_author[0] }
 
 	for title in new_titles:
 		new_types = title.xpath('./@type')
@@ -188,17 +204,19 @@ def generateChronologyCitation(bibl_root,linked_names):
 
 		if title_counter > 0:
 			print("Multiple Titles")
-			text_data = max([ x.strip() for x in bibl_root.xpath('./text()') ],key=len)
 			if 'j' in new_levels:
 				new_citation['isPartOf'] = { '@type': 'PublicationIssue' }
-				new_citation['isPartOf']['name'] = title.xpath('./text()')[0]
-				print(new_citation['isPartOf']['name'])
+				new_citation['name'] = title.xpath('./text()')[0]
+				print(new_citation['name'])
 				date_created = extractDateFromText(text_data)
 				if date_created:
 					new_citation['isPartOf']['dateCreated'] = date_created
+				issue_number = extractIssueNumber(text_data)
+				if issue_number:
+					new_citation['isPartOf']['issueNumber'] = issue_number
 				volume_number = extractVolumeNumber(text_data)
 				if volume_number:
-					new_citation['isPartOf']['issueNumber'] = volume_number
+					new_citation['isPartOf']['volumeNumber'] = volume_number
 			else:
 				new_citation['isPartOf'] = { '@type': 'PublicationVolume' }
 				date_published = extractDateFromText(text_data)
@@ -207,7 +225,7 @@ def generateChronologyCitation(bibl_root,linked_names):
 				volume_number = extractVolumeNumber(text_data)
 				if volume_number:
 					new_citation['isPartOf']['volumeNumber'] = volume_number
-			
+
 			page_start, page_end = getPages(text_data)
 			if page_start:
 				new_citation['isPartOf']['pageStart'] = page_start
@@ -221,6 +239,23 @@ def generateChronologyCitation(bibl_root,linked_names):
 				new_citation['name'] = title.xpath('./text()')[0]
 
 		title_counter += 1
+
+	cor_find = re.search(r', Cor [XIVL]+,',text_data)
+	if cor_find:
+		cor_volume = cor_find.group(0)[6:-1]
+		new_citation['@type'] = 'CreativeWork'
+		new_citation['name'] = 'Correspondance'
+		new_citation['author'] = { '@type': 'Person', '@id': 'catalogdata.library.illinois.edu/lod/entities/Persons/kp/proust1' }
+		new_citation['isPartOf'] = { '@type': 'PublicationVolume', 'volumeNumber': cor_volume }
+		new_citation['editor'] = { '@type': 'Person', '@id': 'http://viaf.org/viaf/44300868'}
+		new_citation['datePublished'] = [ datetime.datetime.strptime('1970','%Y').date().isoformat(), datetime.datetime.strptime('1993','%Y').date().isoformat() ]
+		page_start, page_end = getPages(text_data)
+		if page_start:
+			new_citation['isPartOf']['pageStart'] = page_start
+		if page_end:
+			new_citation['isPartOf']['pageEnd'] = page_end
+		print("CORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXT")
+		print(text_data)
 
 	return new_citation
 
@@ -282,17 +317,18 @@ def getTitle(root,path):
 
 def generateBibCitation(bibl_root,linked_names):
 	new_citation = {}
+	text_data = bibl_root.xpath('normalize-space(.)')
 	new_titles = bibl_root.xpath('.//title')
 	title_counter = 0
 	new_author = bibl_root.xpath('.//author/name/@key')
 	if new_author:
-		new_citation['author'] = { '@type': 'Person', '@id': 'catalogdata.library.illinois.edu/lod/entries/Persons/kp/' + new_author[0] }
+		new_citation['author'] = { '@type': 'Person', '@id': 'catalogdata.library.illinois.edu/lod/entities/Persons/kp/' + new_author[0] }
 	else:
 		new_authors = bibl_root.xpath('.//author/name/text()')
 		if new_authors:
 			for author in new_authors:
 				if author in linked_names[1]:
-					new_citation['author'] = { '@type': 'Person', '@id': 'catalogdata.library.illinois.edu/lod/entries/Persons/kp/' + linked_names[0][linked_names[1].index(author)] }
+					new_citation['author'] = { '@type': 'Person', '@id': 'catalogdata.library.illinois.edu/lod/entities/Persons/kp/' + linked_names[0][linked_names[1].index(author)] }
 					print("FOUND AUTHOR IN CITATION")
 					print(author)
 					print(linked_names[0][linked_names[1].index(author)])
@@ -307,26 +343,44 @@ def generateBibCitation(bibl_root,linked_names):
 
 		if title_counter > 0:
 			print("Multiple Titles")
-			text_data = max([ x.strip() for x in bibl_root.xpath('./text()') ],key=len)
+#			text_data = max([ x.strip() for x in bibl_root.xpath('./text()') ],key=len)
 
 			if 'j' in new_levels:
 				new_issue_number = bibl_root.xpath('./biblScope[@type="issue"]/text()')
 				if new_issue_number:
+					new_is_part_of = { '@type': 'PublicationIssue', 'issueNumber' : new_issue_number[0] }
+					new_pages = bibl_root.xpath('./biblScope[@type="pages"]/text()')
+					if new_pages:
+						page_start, page_end = getPages(new_pages[0])
+						if page_start:
+							new_is_part_of['pageStart'] = page_start
+						if page_end:
+							new_is_part_of['pageEnd'] = page_end
+
 					if 'isPartOf' not in new_citation:
-						new_citation['isPartOf'] = { '@type': 'PublicationIssue', 'issueNumber' : new_issue_number[0] }
+						new_citation['isPartOf'] = new_is_part_of
 					elif isinstance(new_citation['isPartOf'],dict):
-						new_citation['isPartOf'] = [ new_citation['isPartOf'], { '@type': 'PublicationIssue', 'issueNumber' : new_issue_number[0] } ]
+						new_citation['isPartOf'] = [ new_citation['isPartOf'], new_is_part_of ]
 					elif isinstance(new_citation['isPartOf'],list):
-						new_citation['isPartOf'].append({ '@type': 'PublicationIssue', 'issueNumber' : new_issue_number[0] })
+						new_citation['isPartOf'].append(new_is_part_of)
 
 				new_volume_number = bibl_root.xpath('./biblScope[@type="vol"]/text()')
 				if new_volume_number:
+					new_is_part_of = { '@type': 'PublicationVolume', 'volumeNumber': new_volume_number[0] }
+					new_pages = bibl_root.xpath('./biblScope[@type="pages"]/text()')
+					if new_pages:
+						page_start, page_end = getPages(new_pages[0])
+						if page_start:
+							new_is_part_of['pageStart'] = page_start
+						if page_end:
+							new_is_part_of['pageEnd'] = page_end
+
 					if 'isPartOf' not in new_citation:
-						new_citation['isPartOf'] = { '@type': 'PublicationVolume', 'volumeNumber': new_volume_number[0] }
+						new_citation['isPartOf'] = new_is_part_of
 					elif isinstance(new_citation['isPartOf'],dict):
-						new_citation['isPartOf'] = [ new_citation['isPartOf'], { '@type': 'PublicationVolume', 'volumeNumber': new_volume_number[0] } ]
+						new_citation['isPartOf'] = [ new_citation['isPartOf'], new_is_part_of ]
 					elif isinstance(new_citation['isPartOf'],list):
-						new_citation['isPartOf'].append({ '@type': 'PublicationVolume', 'volumeNumber': new_volume_number[0] })
+						new_citation['isPartOf'].append(new_is_part_of)
 
 				new_citation['name'] = getTitle(title,'./')
 				if not new_citation['name']:
@@ -353,16 +407,6 @@ def generateBibCitation(bibl_root,linked_names):
 				new_volume_number = bibl_root.xpath('./biblScope[@type="vol"]/text()')
 				if new_volume_number:
 					new_citation['isPartOf']['volumeNumber'] = new_volume_number[0]
-
-			new_pages = bibl_root.xpath('./biblScope[@type="pages"]/text()')
-			if new_pages:
-#				print(new_pages[0])
-#				print(getPages(new_pages[0]))
-				page_start, page_end = getPages(new_pages[0])
-				if page_start:
-					new_citation['pageStart'] = page_start
-				if page_end:
-					new_citation['pageEnd'] = page_end
 
 		else:
 			new_citation['@type'] = 'CreativeWork'
@@ -401,9 +445,9 @@ def processTEIFile(tei_file,linked_names):
 		output_card['@id'] = root.xpath('/TEI/@xml:id')[0]
 		output_card['@type'] = 'Dataset'
 		output_card['author'] = { '@type': 'Person', '@id': 'http://viaf.org/viaf/44300868'}
-		output_card['inLanguage'] = 'fr'
 		print(output_card['@id'])
-#		print(root.xpath('/TEI/teiHeader/fileDesc/titleStmt/title/text()')[1])
+#		print(root.xpath('/TEI/teiHeader/fileDesc/titleStmt/title/text()'))
+		output_card['name'] = root.xpath('/TEI/teiHeader/fileDesc/titleStmt/title/text()')
 #		print(root.xpath('/TEI/teiHeader/fileDesc/editionStmt/edition/date/@when')[0])
 		output_card['dateCreated'] = getDate(root,'/TEI/teiHeader/fileDesc/editionStmt/edition/date/')
 		if not output_card['dateCreated']:
@@ -425,7 +469,7 @@ def processTEIFile(tei_file,linked_names):
 		for t in titles:
 			output_card['mentions'].append({ '@type': 'CreativeWork', 'name': t.xpath('normalize-space(.)') })
 #		output_card['mentions'] = [ { '@type': 'CreativeWork', 'title': x } for x in ( root.xpath('/TEI/text/body/div2/p/title/rs[normalize-space()]') + root.xpath('/TEI/text/body/div2/note/title/rs[normalize-space()]') if len(root.xpath('/TEI/text/body/div2/p/title/rs[normalize-space()]') + root.xpath('/TEI/text/body/div2/note/title/rs[normalize-space()]')) > 0 else root.xpath('/TEI/text/body/div2/p/title[normalize-space()]') + root.xpath('/TEI/text/body/div2/note/title[normalize-space()]') ) ]
-		output_card['mentions'] += [ { '@type': 'Person', '@id': 'catalogdata.library.illinois.edu/lod/entries/Persons/kp/' + x } for x in root.xpath('/TEI/text/body/div2/p/name/@key') + root.xpath('/TEI/text/body/div2/note/name/@key') if x in linked_names[0] ]
+		output_card['mentions'] += [ { '@type': 'Person', '@id': 'catalogdata.library.illinois.edu/lod/entities/Persons/kp/' + x } for x in root.xpath('/TEI/text/body/div2/p/name/@key') + root.xpath('/TEI/text/body/div2/note/name/@key') if x in linked_names[0] ]
 		print(output_card['mentions'])
 		if len(output_card['mentions']) == 1:
 			output_card['mentions'] = output_card['mentions'][0]
@@ -450,7 +494,6 @@ def processTEIFile(tei_file,linked_names):
 		output_card['@id'] = root.xpath('/TEI/@xml:id')[0]
 		output_card['@type'] = 'Dataset'
 		output_card['author'] = { '@type': 'Person', '@id': 'http://viaf.org/viaf/44300868'}
-		output_card['inLanguage'] = 'fr'
 		output_card['temporalCoverage'] = getDate(root,'//head/date/')
 		if not output_card['temporalCoverage']:
 			del output_card['temporalCoverage']
@@ -466,8 +509,8 @@ def processTEIFile(tei_file,linked_names):
 			output_card['mentions'].append({ '@type': 'CreativeWork', 'name': t.xpath('normalize-space(.)') })
 #			print(t.xpath('normalize-space(.)'))
 #		output_card['mentions'] = [ { '@type': 'CreativeWork', 'title': x } for x in root.xpath('//div1//p/title[normalize-space(.)]') + root.xpath('//div1//note/title[normalize-space(.)]') ]
-		output_card['mentions'] += [ { '@type': 'Person', '@id': 'catalogdata.library.illinois.edu/lod/entries/Persons/kp/' + x } for x in root.xpath('//div1//p/name/@key') + root.xpath('//div1//note/name/@key') if x in linked_names[0] ]
-#		output_card['mentions'] += [ { '@type': 'Person', '@id': 'catalogdata.library.illinois.edu/lod/entries/Persons/kp/' + linked_names[0][linked_names[1].index(x)] } for x in root.xpath('//div1//p/name/text()') + root.xpath('//div1//note/name/text()') if x in linked_names[1] ]
+		output_card['mentions'] += [ { '@type': 'Person', '@id': 'catalogdata.library.illinois.edu/lod/entities/Persons/kp/' + x } for x in root.xpath('//div1//p/name/@key') + root.xpath('//div1//note/name/@key') if x in linked_names[0] ]
+#		output_card['mentions'] += [ { '@type': 'Person', '@id': 'catalogdata.library.illinois.edu/lod/entities/Persons/kp/' + linked_names[0][linked_names[1].index(x)] } for x in root.xpath('//div1//p/name/text()') + root.xpath('//div1//note/name/text()') if x in linked_names[1] ]
 		print("MENTIONS")
 		print(output_card['mentions'])
 		if len(output_card['mentions']) == 1:
