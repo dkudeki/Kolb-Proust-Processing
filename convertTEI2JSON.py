@@ -51,7 +51,7 @@ def readFormattedDate(target_date):
 
 def extractDateFromText(text_string):
 	print("EXTRACTING DATE")
-	print(text_string)
+#	print(text_string)
 	year_results = re.search(r'[12][890][0-9][0-9]',text_string)
 	year = None
 	if year_results:
@@ -63,7 +63,7 @@ def extractDateFromText(text_string):
 	months = {u'janvier': '01',u'février': '02',u'mars': '03',u'avril': '04',u'mai': '05',u'juin': '06',u'juillet': '07',u'août': '08',u'septembre': '09',u'octobre': '10',u'novembre': '11',u'décembre': '12'}
 	if month_results:
 		month = months[month_results.group(0)]
-		print(month_results.group(0))
+#		print(month_results.group(0))
 	else:
 		month = '00'
 
@@ -182,10 +182,10 @@ def getPages(text_string):
 def generateChronologyCitation(bibl_root,linked_names):
 	new_citation = {}
 #	text_data = max([ x.strip() for x in bibl_root.xpath('./text()') ],key=len)
-	print(bibl_root)
+#	print(bibl_root)
 	text_data = bibl_root.xpath('normalize-space(.)')
-	print("TEXT DATA TEXT DATA TEXT DATA TEXT DATA TEXT DATA TEXT DATA TEXT DATA TEXT DATA TEXT DATA TEXT DATA TEXT DATA TEXT DATA TEXT DATA")
-	print(text_data)
+#	print("TEXT DATA TEXT DATA TEXT DATA TEXT DATA TEXT DATA TEXT DATA TEXT DATA TEXT DATA TEXT DATA TEXT DATA TEXT DATA TEXT DATA TEXT DATA")
+#	print(text_data)
 
 	new_titles = bibl_root.xpath('.//title')
 	title_counter = 0
@@ -208,7 +208,7 @@ def generateChronologyCitation(bibl_root,linked_names):
 			if 'j' in new_levels:
 				new_citation['isPartOf'] = { '@type': 'PublicationIssue' }
 				new_citation['name'] = title.xpath('./text()')[0]
-				print(new_citation['name'])
+#				print(new_citation['name'])
 				date_created = extractDateFromText(text_data)
 				if date_created:
 					new_citation['isPartOf']['dateCreated'] = date_created
@@ -255,8 +255,8 @@ def generateChronologyCitation(bibl_root,linked_names):
 			new_citation['isPartOf']['pageStart'] = page_start
 		if page_end:
 			new_citation['isPartOf']['pageEnd'] = page_end
-		print("CORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXT")
-		print(text_data)
+#		print("CORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXT")
+#		print(text_data)
 
 	return new_citation
 
@@ -292,9 +292,9 @@ def getDate(root,path):
 				return readFormattedDate(value_dates[0]).date().isoformat()
 			except:
 				text_dates = root.xpath(path + 'text()')
-				print(text_dates)
+#				print(text_dates)
 				if text_dates:
-					print(extractDateFromText(text_dates[0]))
+#					print(extractDateFromText(text_dates[0]))
 					return extractDateFromText(text_dates[0])
 				else:
 					return None
@@ -331,8 +331,8 @@ def generateBibCitation(bibl_root,linked_names):
 				if author in linked_names[1]:
 					new_citation['author'] = { '@type': 'Person', '@id': 'catalogdata.library.illinois.edu/lod/entities/Persons/kp/' + linked_names[0][linked_names[1].index(author)] }
 					print("FOUND AUTHOR IN CITATION")
-					print(author)
-					print(linked_names[0][linked_names[1].index(author)])
+#					print(author)
+#					print(linked_names[0][linked_names[1].index(author)])
 
 	new_citation['dateCreated'] = getDate(bibl_root,'./date/')
 	if not new_citation['dateCreated']:
@@ -446,7 +446,7 @@ def processTEIFile(tei_file,linked_names):
 		output_card['@id'] = root.xpath('/TEI/@xml:id')[0]
 		output_card['@type'] = 'Dataset'
 		output_card['author'] = { '@type': 'Person', '@id': 'http://viaf.org/viaf/44300868'}
-		print(output_card['@id'])
+#		print(output_card['@id'])
 #		print(root.xpath('/TEI/teiHeader/fileDesc/titleStmt/title/text()'))
 		output_card['name'] = root.xpath('/TEI/teiHeader/fileDesc/titleStmt/title/text()')
 #		print(root.xpath('/TEI/teiHeader/fileDesc/editionStmt/edition/date/@when')[0])
@@ -471,25 +471,25 @@ def processTEIFile(tei_file,linked_names):
 			output_card['mentions'].append({ '@type': 'CreativeWork', 'name': t.xpath('normalize-space(.)') })
 #		output_card['mentions'] = [ { '@type': 'CreativeWork', 'title': x } for x in ( root.xpath('/TEI/text/body/div2/p/title/rs[normalize-space()]') + root.xpath('/TEI/text/body/div2/note/title/rs[normalize-space()]') if len(root.xpath('/TEI/text/body/div2/p/title/rs[normalize-space()]') + root.xpath('/TEI/text/body/div2/note/title/rs[normalize-space()]')) > 0 else root.xpath('/TEI/text/body/div2/p/title[normalize-space()]') + root.xpath('/TEI/text/body/div2/note/title[normalize-space()]') ) ]
 		output_card['mentions'] += [ { '@type': 'Person', '@id': 'catalogdata.library.illinois.edu/lod/entities/Persons/kp/' + x } for x in root.xpath('/TEI/text/body/div2/p/name/@key') + root.xpath('/TEI/text/body/div2/note/name/@key') if x in linked_names[0] ]
-		print(output_card['mentions'])
+#		print(output_card['mentions'])
 		if len(output_card['mentions']) == 1:
 			output_card['mentions'] = output_card['mentions'][0]
 		elif len(output_card['mentions']) == 0:
 			del output_card['mentions']
 
-		if 'mentions' in output_card:
-			print(output_card['mentions'])
+#		if 'mentions' in output_card:
+#			print(output_card['mentions'])
 
 		output_card['citation'] = [ generateBibCitation(y,linked_names) for y in root.xpath('//div2/bibl') + root.xpath('//div2/p/bibl') + root.xpath('//div2/note/bibl') ]
-		print(output_card['citation'])
+#		print(output_card['citation'])
 		output_card['citation'] = [ z for z in output_card['citation'] if len(z) > 0 ]
 		if len(output_card['citation']) == 1:
 			output_card['citation'] = output_card['citation'][0]
 		elif len(output_card['citation']) == 0:
 			del output_card['citation']
 
-		if 'citation' in output_card:
-			print(output_card['@id'])
+#		if 'citation' in output_card:
+#			print(output_card['@id'])
 	else:
 		#chronology
 		output_card['@id'] = root.xpath('/TEI/@xml:id')[0]
@@ -504,7 +504,7 @@ def processTEIFile(tei_file,linked_names):
 #			output_card['temporalCoverage'] = readFormattedDate(root.xpath('//head/date/@when')[0]).date().isoformat()
 		
 		titles = root.xpath('//div1//p/title') + root.xpath('//div1//note/title')
-		print(titles)
+#		print(titles)
 		output_card['mentions'] = []
 		for t in titles:
 			output_card['mentions'].append({ '@type': 'CreativeWork', 'name': t.xpath('normalize-space(.)') })
@@ -513,7 +513,7 @@ def processTEIFile(tei_file,linked_names):
 		output_card['mentions'] += [ { '@type': 'Person', '@id': 'catalogdata.library.illinois.edu/lod/entities/Persons/kp/' + x } for x in root.xpath('//div1//p/name/@key') + root.xpath('//div1//note/name/@key') if x in linked_names[0] ]
 #		output_card['mentions'] += [ { '@type': 'Person', '@id': 'catalogdata.library.illinois.edu/lod/entities/Persons/kp/' + linked_names[0][linked_names[1].index(x)] } for x in root.xpath('//div1//p/name/text()') + root.xpath('//div1//note/name/text()') if x in linked_names[1] ]
 		print("MENTIONS")
-		print(output_card['mentions'])
+#		print(output_card['mentions'])
 		if len(output_card['mentions']) == 1:
 			output_card['mentions'] = output_card['mentions'][0]
 		elif len(output_card['mentions']) == 0:
@@ -526,8 +526,8 @@ def processTEIFile(tei_file,linked_names):
 		elif len(output_card['citation']) == 0:
 			del output_card['citation']
 
-		if 'citation' in output_card:
-			print(tei_file)
+#		if 'citation' in output_card:
+#			print(tei_file)
 
 
 	return json.dumps(output_card,indent=4,ensure_ascii=False).encode('utf-8')
