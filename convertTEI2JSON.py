@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-import os, json, datetime, re, csv
+import os, json, datetime, re, csv, sys
 from shutil import copyfile
 from lxml import etree
 from unicodedata import normalize
+import codecs
 
 if os.name == 'nt':
 	SLASH = '\\'
@@ -591,7 +592,16 @@ def getNameData():
 
 	return [linked_name_keys, linked_names]
 
+#On Windows, the Command Prompt doesn't know how to display unicode characters, causing it to halt when it encounters non-ASCII characters
+def setupByOS():
+	if os.name == 'nt':
+		if sys.stdout.encoding != 'cp850':
+		  sys.stdout = codecs.getwriter('cp850')(sys.stdout, 'replace')
+		if sys.stderr.encoding != 'cp850':
+		  sys.stderr = codecs.getwriter('cp850')(sys.stderr, 'replace')
+
 def main():
+	setupByOS()
 	linked_names = getNameData()
 	traverseFullTree(processTEIFile,linked_names)
 
