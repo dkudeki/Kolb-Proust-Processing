@@ -98,7 +98,10 @@ def extractDateFromText(text_string):
 	if not year:
 		return None
 	else:
-		return readFormattedDate(year+month+day).date().isoformat()
+		try:
+			return readFormattedDate(year+month+day).date().isoformat()
+		except ValueError:
+			return None
 
 def extractIssueOrVolumeNumber(text_string,mode):
 	if mode == 'volume':
@@ -181,7 +184,7 @@ def getPages(text_string):
 
 def addLinkToCitation(new_citation,tei_file):
 	if 'name' in new_citation:
-		if new_citation['name'] == 'Figaro':
+		if new_citation['name'].strip() == 'Figaro':
 			if 'datePublished' in new_citation:
 				datetime_published = datetime.datetime.strptime(new_citation['datePublished'],'%Y-%m-%d')
 				new_citation['sameAs'] = 'http://gallica.bnf.fr/ark:/12148/cb34355551z/date' + new_citation['datePublished'][:4] + new_citation['datePublished'][5:7] + new_citation['datePublished'][8:] + '.item'
