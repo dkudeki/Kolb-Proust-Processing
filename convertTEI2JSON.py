@@ -179,7 +179,22 @@ def getPages(text_string):
 
 	return None, None
 
-def generateChronologyCitation(bibl_root,linked_names):
+def addLinkToCitation(new_citation,tei_file):
+	if 'name' in new_citation:
+		if new_citation['name'] == 'Figaro':
+			if 'datePublished' in new_citation:
+				datetime_published = datetime.datetime.strptime(new_citation['datePublished'],'%Y-%m-%d')
+				new_citation['sameAs'] = 'http://gallica.bnf.fr/ark:/12148/cb34355551z/date' + new_citation['datePublished'][:4] + new_citation['datePublished'][5:7] + new_citation['datePublished'][8:] + '.item'
+				print(new_citation['sameAs'])
+
+				with open('JournalLinks.csv','a') as outfile:
+					outfileWriter = csv.writer(outfile)
+
+					outfileWriter.writerow([tei_file[tei_file.rfind('/')+1:],new_citation['sameAs']])
+
+	return new_citation
+
+def generateChronologyCitation(bibl_root,linked_names,tei_file):
 	new_citation = {}
 #	text_data = max([ x.strip() for x in bibl_root.xpath('./text()') ],key=len)
 	print(bibl_root)
@@ -193,15 +208,13 @@ def generateChronologyCitation(bibl_root,linked_names):
 	if new_author:
 		new_citation['author'] = { '@type': 'Person', '@id': 'catalogdata.library.illinois.edu/lod/entities/Persons/kp/' + new_author[0] }
 
+	date_published = extractDateFromText(text_data)
+	if date_published:
+		new_citation['datePublished'] = date_published
+
 	for title in new_titles:
 		new_types = title.xpath('./@type')
 		new_levels = title.xpath('./@level')
-#		if ('es' in new_types or 're' in new_types) or 'a' in new_levels:
-#			new_citation['headline'] = title.xpath('./text()')[0]
-#			new_citation['@type'] = 'Text'
-#		else:
-#			new_citation['name'] = title.xpath('./text()')[0]
-#			new_citation['@type'] = 'CreativeWork'
 
 		if title_counter > 0:
 			print("Multiple Titles")
@@ -220,9 +233,6 @@ def generateChronologyCitation(bibl_root,linked_names):
 					new_citation['isPartOf']['volumeNumber'] = volume_number
 			else:
 				new_citation['isPartOf'] = { '@type': 'PublicationVolume' }
-				date_published = extractDateFromText(text_data)
-				if date_published:
-					new_citation['isPartOf']['datePublished'] = date_published
 				volume_number = extractVolumeNumber(text_data)
 				if volume_number:
 					new_citation['isPartOf']['volumeNumber'] = volume_number
@@ -257,6 +267,8 @@ def generateChronologyCitation(bibl_root,linked_names):
 			new_citation['isPartOf']['pageEnd'] = page_end
 		print("CORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXTCORTEXT")
 		print(text_data)
+
+	new_citation = addLinkToCitation(new_citation,tei_file)
 
 	return new_citation
 
@@ -316,7 +328,7 @@ def getTitle(root,path):
 		else:
 			return None
 
-def generateBibCitation(bibl_root,linked_names):
+def generateBibCitation(bibl_root,linked_names,tei_file):
 	new_citation = {}
 	text_data = bibl_root.xpath('normalize-space(.)')
 	new_titles = bibl_root.xpath('.//title')
@@ -334,9 +346,9 @@ def generateBibCitation(bibl_root,linked_names):
 					print(author)
 					print(linked_names[0][linked_names[1].index(author)])
 
-	new_citation['dateCreated'] = getDate(bibl_root,'./date/')
-	if not new_citation['dateCreated']:
-		del new_citation['dateCreated']
+	new_citation['datePublished'] = getDate(bibl_root,'./date/')
+	if not new_citation['datePublished']:
+		del new_citation['datePublished']
 
 	for title in new_titles:
 		new_types = title.xpath('./@type')
@@ -357,6 +369,10 @@ def generateBibCitation(bibl_root,linked_names):
 							new_is_part_of['pageStart'] = page_start
 						if page_end:
 							new_is_part_of['pageEnd'] = page_end
+
+					new_is_part_of['dateCreated'] = getDate(bibl_root,'./date/')
+					if not new_is_part_of['dateCreated']:
+						del new_is_part_of['dateCreated']
 
 					if 'isPartOf' not in new_citation:
 						new_citation['isPartOf'] = new_is_part_of
@@ -395,10 +411,6 @@ def generateBibCitation(bibl_root,linked_names):
 				if new_publisher:
 					new_citation['publisher'] = new_publisher[0]
 
-				new_citation['datePublished'] = getDate(bibl_root,'./date/')
-				if not new_citation['datePublished']:
-					del new_citation['datePublished']
-
 #				new_volume_number = bibl_root.xpath('./biblScope[@type="vol"]/text()')
 #				if new_volume_number:
 #					print(new_volume_number[0])
@@ -421,6 +433,8 @@ def generateBibCitation(bibl_root,linked_names):
 					del new_citation['name']
 
 		title_counter += 1
+
+	new_citation = addLinkToCitation(new_citation,tei_file)
 
 	return new_citation
 
@@ -480,7 +494,7 @@ def processTEIFile(tei_file,linked_names):
 		if 'mentions' in output_card:
 			print(output_card['mentions'])
 
-		output_card['citation'] = [ generateBibCitation(y,linked_names) for y in root.xpath('//div2/bibl') + root.xpath('//div2/p/bibl') + root.xpath('//div2/note/bibl') ]
+		output_card['citation'] = [ generateBibCitation(y,linked_names,tei_file) for y in root.xpath('//div2/bibl') + root.xpath('//div2/p/bibl') + root.xpath('//div2/note/bibl') ]
 		print(output_card['citation'])
 		output_card['citation'] = [ z for z in output_card['citation'] if len(z) > 0 ]
 		if len(output_card['citation']) == 1:
@@ -519,7 +533,7 @@ def processTEIFile(tei_file,linked_names):
 		elif len(output_card['mentions']) == 0:
 			del output_card['mentions']
 
-		output_card['citation'] = [ generateChronologyCitation(y,linked_names) for y in root.xpath('//div1//bibl') ]
+		output_card['citation'] = [ generateChronologyCitation(y,linked_names,tei_file) for y in root.xpath('//div1//bibl') ]
 		output_card['citation'] = [ z for z in output_card['citation'] if len(z) > 0 ]
 		if len(output_card['citation']) == 1:
 			output_card['citation'] = output_card['citation'][0]
@@ -602,6 +616,10 @@ def setupByOS():
 
 def main():
 	setupByOS()
+	with open('JournalLinks.csv','w') as outfile:
+		outfileWriter = csv.writer(outfile)
+		outfileWriter.writerow(['FILE',"LINK"])
+
 	linked_names = getNameData()
 	traverseFullTree(processTEIFile,linked_names)
 
