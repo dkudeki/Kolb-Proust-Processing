@@ -13,22 +13,22 @@ else:
 def readFormattedDate(target_date):
 #	print(target_date)
 	if len(target_date) == 4:
-		format = '%Y'
+		return target_date
 	elif len(target_date) == 6:
 		if target_date[4:6] == '00':
-			format = '%Y00'
+			return target_date[:4]
 		elif int(target_date[4:6]) <= 12:
-			format = '%Y%m'
+			return target_date[:4] + '-' + target_date[4:6]
 		else:
 			format = '%Y%d'
 	elif len(target_date) == 8:
 		if target_date[6:] == '00' and target_date[4:6] == '00':
-			format = '%Y0000'
+			return target_date[:4]
 		elif target_date[4:6] == '00' and target_date[6:] != '00':
 			format = '%Y00%d'
 		elif target_date[6:] == '00':
 			if int(target_date[4:6]) <= 12:
-				format = '%Y%m00'
+				return target_date[:4] + '-' + target_date[4:6]
 			else:
 				format = '%Y%d00'
 		else:
@@ -42,12 +42,12 @@ def readFormattedDate(target_date):
 		elif len(target_date) > 6:
 			return readFormattedDate(target_date[:6])
 		elif len(target_date) > 4:
-			format = '%Y'
+			return target_date[:4]
 		elif len(target_date) > 2:
 			format = '%y'
 
 	print(target_date)
-	return datetime.datetime.strptime(target_date,format)
+	return datetime.datetime.strptime(target_date,format).date().isoformat()
 
 def extractDateFromText(text_string):
 	print("EXTRACTING DATE")
@@ -99,7 +99,7 @@ def extractDateFromText(text_string):
 		return None
 	else:
 		try:
-			return readFormattedDate(year+month+day).date().isoformat()
+			return readFormattedDate(year+month+day)
 		except ValueError:
 			return None
 
@@ -183,17 +183,28 @@ def getPages(text_string):
 	return None, None
 
 def addLinkToCitation(new_citation,tei_file):
-	if 'name' in new_citation:
-		if new_citation['name'].strip() == 'Figaro':
+	if 'isPartOf' in new_citation and ('name' in new_citation['isPartOf'] or ('isPartOf' in new_citation['isPartOf'] and 'name' in new_citation['isPartOf']['isPartOf'])):
+		journal_name = new_citation['isPartOf']['isPartOf']['name'] if 'isPartOf' in new_citation['isPartOf'] and 'name' in new_citation['isPartOf']['isPartOf'] else new_citation['isPartOf']['name']
+
+		if journal_name.strip() == 'Figaro' or journal_name.strip() == 'Le Figaro':
 			if 'datePublished' in new_citation:
 				datetime_published = datetime.datetime.strptime(new_citation['datePublished'],'%Y-%m-%d')
-				new_citation['sameAs'] = 'http://gallica.bnf.fr/ark:/12148/cb34355551z/date' + new_citation['datePublished'][:4] + new_citation['datePublished'][5:7] + new_citation['datePublished'][8:] + '.item'
-				print(new_citation['sameAs'])
+				if 'isPartOf' in new_citation['isPartOf'] and 'name' in new_citation['isPartOf']['isPartOf']:
+					new_citation['isPartOf']['isPartOf']['sameAs'] = 'http://gallica.bnf.fr/ark:/12148/cb34355551z/date' + new_citation['datePublished'][:4] + new_citation['datePublished'][5:7] + new_citation['datePublished'][8:] + '.item'
+					print(new_citation['isPartOf']['isPartOf']['sameAs'])
 
-				with open('JournalLinks.csv','a') as outfile:
-					outfileWriter = csv.writer(outfile)
+					with open('JournalLinks.csv','a') as outfile:
+						outfileWriter = csv.writer(outfile)
 
-					outfileWriter.writerow([tei_file[tei_file.rfind('/')+1:],new_citation['sameAs']])
+						outfileWriter.writerow([tei_file[tei_file.rfind('/')+1:],new_citation['isPartOf']['isPartOf']['sameAs']])
+				else:
+					new_citation['isPartOf']['sameAs'] = 'http://gallica.bnf.fr/ark:/12148/cb34355551z/date' + new_citation['datePublished'][:4] + new_citation['datePublished'][5:7] + new_citation['datePublished'][8:] + '.item'
+					print(new_citation['isPartOf']['sameAs'])
+
+					with open('JournalLinks.csv','a') as outfile:
+						outfileWriter = csv.writer(outfile)
+
+						outfileWriter.writerow([tei_file[tei_file.rfind('/')+1:],new_citation['isPartOf']['sameAs']])
 
 	return new_citation
 
@@ -223,32 +234,34 @@ def generateChronologyCitation(bibl_root,linked_names,tei_file):
 			print("Multiple Titles")
 			if 'j' in new_levels:
 				new_citation['isPartOf'] = { '@type': 'PublicationIssue' }
-				new_citation['name'] = title.xpath('./text()')[0]
-				print(new_citation['name'])
 				date_created = extractDateFromText(text_data)
 				if date_created:
 					new_citation['isPartOf']['dateCreated'] = date_created
 				issue_number = extractIssueNumber(text_data)
 				if issue_number:
 					new_citation['isPartOf']['issueNumber'] = issue_number
-				volume_number = extractVolumeNumber(text_data)
-				if volume_number:
-					new_citation['isPartOf']['volumeNumber'] = volume_number
-			else:
-				new_citation['isPartOf'] = { '@type': 'PublicationVolume' }
-				volume_number = extractVolumeNumber(text_data)
-				if volume_number:
-					new_citation['isPartOf']['volumeNumber'] = volume_number
 
-			page_start, page_end = getPages(text_data)
-			if page_start:
-				new_citation['isPartOf']['pageStart'] = page_start
-			if page_end:
-				new_citation['isPartOf']['pageEnd'] = page_end
+				volume_number = extractVolumeNumber(text_data)
+				if volume_number:
+					new_citation['isPartOf']['isPartOf'] = { '@type': 'PublicationVolume' }
+					new_citation['isPartOf']['isPartOf']['volumeNumber'] = volume_number
+					new_citation['isPartOf']['isPartOf']['name'] = title.xpath('./text()')[0]
+					print(new_citation['isPartOf']['isPartOf']['name'])
+
+			if 'isPartOf' in new_citation and 'isPartOf' in new_citation['isPartOf'] and 'issueNumber' in new_citation['isPartOf'] and 'volumeNumber' in new_citation['isPartOf']['isPartOf']:
+				new_citation['isPartOf']['name'] = new_citation['isPartOf']['isPartOf']['name'] + ', ' + new_citation['isPartOf']['isPartOf']['volumeNumber'] + ', ' + new_citation['isPartOf']['issueNumber']
+
 		else:
 			new_citation['@type'] = 'CreativeWork'
 			if ('es' in new_types or 're' in new_types) or 'a' in new_levels:
 				new_citation['headline'] = title.xpath('./text()')[0]
+
+				new_citation['additionalType'] = 'Article'
+				page_start, page_end = getPages(text_data)
+				if page_start:
+					new_citation['pageStart'] = page_start
+				if page_end:
+					new_citation['pageEnd'] = page_end
 			else:
 				new_citation['name'] = title.xpath('./text()')[0]
 
@@ -262,7 +275,7 @@ def generateChronologyCitation(bibl_root,linked_names,tei_file):
 		new_citation['author'] = { '@type': 'Person', '@id': 'catalogdata.library.illinois.edu/lod/entities/Persons/kp/proust1' }
 		new_citation['isPartOf'] = { '@type': 'PublicationVolume', 'volumeNumber': cor_volume }
 		new_citation['editor'] = { '@type': 'Person', '@id': 'http://viaf.org/viaf/44300868'}
-		new_citation['datePublished'] = [ datetime.datetime.strptime('1970','%Y').date().isoformat(), datetime.datetime.strptime('1993','%Y').date().isoformat() ]
+		new_citation['datePublished'] = '1970--1993'
 		page_start, page_end = getPages(text_data)
 		if page_start:
 			new_citation['isPartOf']['pageStart'] = page_start
@@ -280,13 +293,13 @@ def getDate(root,path):
 	if when_dates:
 		try:
 			int(when_dates[0])
-			return readFormattedDate(when_dates[0]).date().isoformat()
+			return readFormattedDate(when_dates[0])
 		except:
 			value_dates = root.xpath(path + '@value')
 			if value_dates:
 				try:
 					int(value_dates[0])
-					return readFormattedDate(value_dates[0]).date().isoformat()
+					return readFormattedDate(value_dates[0])
 				except:
 					text_dates = root.xpath(path + 'text()')
 					if text_dates:
@@ -304,7 +317,7 @@ def getDate(root,path):
 		if value_dates:
 			try:
 				int(value_dates[0])
-				return readFormattedDate(value_dates[0]).date().isoformat()
+				return readFormattedDate(value_dates[0])
 			except:
 				text_dates = root.xpath(path + 'text()')
 				print(text_dates)
@@ -361,17 +374,10 @@ def generateBibCitation(bibl_root,linked_names,tei_file):
 			print("Multiple Titles")
 #			text_data = max([ x.strip() for x in bibl_root.xpath('./text()') ],key=len)
 
-			if 'j' in new_levels:
+			if 'j' in new_levels or 'm' in new_levels:
 				new_issue_number = bibl_root.xpath('./biblScope[@type="issue"]/text()')
 				if new_issue_number:
 					new_is_part_of = { '@type': 'PublicationIssue', 'issueNumber' : new_issue_number[0] }
-					new_pages = bibl_root.xpath('./biblScope[@type="pages"]/text()')
-					if new_pages:
-						page_start, page_end = getPages(new_pages[0])
-						if page_start:
-							new_is_part_of['pageStart'] = page_start
-						if page_end:
-							new_is_part_of['pageEnd'] = page_end
 
 					new_is_part_of['dateCreated'] = getDate(bibl_root,'./date/')
 					if not new_is_part_of['dateCreated']:
@@ -379,32 +385,25 @@ def generateBibCitation(bibl_root,linked_names,tei_file):
 
 					if 'isPartOf' not in new_citation:
 						new_citation['isPartOf'] = new_is_part_of
-					elif isinstance(new_citation['isPartOf'],dict):
-						new_citation['isPartOf'] = [ new_citation['isPartOf'], new_is_part_of ]
-					elif isinstance(new_citation['isPartOf'],list):
-						new_citation['isPartOf'].append(new_is_part_of)
+					else:
+						new_is_part_of['isPartOf'] = new_citation['isPartOf']
+						new_citation['isPartOf'] = new_is_part_of
 
-				new_volume_number = bibl_root.xpath('./biblScope[@type="vol"]/text()')
-				if new_volume_number:
-					new_is_part_of = { '@type': 'PublicationVolume', 'volumeNumber': new_volume_number[0] }
-					new_pages = bibl_root.xpath('./biblScope[@type="pages"]/text()')
-					if new_pages:
-						page_start, page_end = getPages(new_pages[0])
-						if page_start:
-							new_is_part_of['pageStart'] = page_start
-						if page_end:
-							new_is_part_of['pageEnd'] = page_end
+				journal_title = getTitle(title,'./')
+				if journal_title:
+					if 'm' in new_levels:
+						new_is_part_of = { '@type': 'Book', 'name': journal_title }
+					else:
+						new_is_part_of = { '@type': 'PublicationVolume', 'name': journal_title }
+
+					new_volume_number = bibl_root.xpath('./biblScope[@type="vol"]/text()')
+					if new_volume_number:
+						new_is_part_of['volumeNumber'] = new_volume_number[0]
 
 					if 'isPartOf' not in new_citation:
 						new_citation['isPartOf'] = new_is_part_of
-					elif isinstance(new_citation['isPartOf'],dict):
-						new_citation['isPartOf'] = [ new_citation['isPartOf'], new_is_part_of ]
-					elif isinstance(new_citation['isPartOf'],list):
-						new_citation['isPartOf'].append(new_is_part_of)
-
-				new_citation['name'] = getTitle(title,'./')
-				if not new_citation['name']:
-					del new_citation['name']
+					else:
+						new_citation['isPartOf']['isPartOf'] = new_is_part_of
 
 				pub_place = bibl_root.xpath('./pubPlace/text()')
 				if pub_place:
@@ -414,9 +413,6 @@ def generateBibCitation(bibl_root,linked_names,tei_file):
 				if new_publisher:
 					new_citation['publisher'] = new_publisher[0]
 
-#				new_volume_number = bibl_root.xpath('./biblScope[@type="vol"]/text()')
-#				if new_volume_number:
-#					print(new_volume_number[0])
 			else:
 				new_citation['isPartOf'] = { '@type': 'PublicationVolume' }
 
@@ -424,12 +420,25 @@ def generateBibCitation(bibl_root,linked_names,tei_file):
 				if new_volume_number:
 					new_citation['isPartOf']['volumeNumber'] = new_volume_number[0]
 
+			if 'isPartOf' in new_citation and 'isPartOf' in new_citation['isPartOf'] and 'volumeNumber' in new_citation['isPartOf']['isPartOf']:
+				new_citation['isPartOf']['name'] = new_citation['isPartOf']['isPartOf']['name'] + ', ' + new_citation['isPartOf']['isPartOf']['volumeNumber'] + ', ' + new_citation['isPartOf']['issueNumber']
+
 		else:
 			new_citation['@type'] = 'CreativeWork'
 			if ('es' in new_types or 're' in new_types) or 'a' in new_levels:
 				new_citation['headline'] = getTitle(title,'./')
 				if not new_citation['headline']:
 					del new_citation['headline']
+				else:
+					new_citation['additionalType'] = 'Article'
+
+					new_pages = bibl_root.xpath('./biblScope[@type="pages"]/text()')
+					if new_pages:
+						page_start, page_end = getPages(new_pages[0])
+						if page_start:
+							new_citation['pageStart'] = page_start
+						if page_end:
+							new_citation['pageEnd'] = page_end
 			else:
 				new_citation['name'] = getTitle(title,'./')
 				if not new_citation['name']:
@@ -465,7 +474,7 @@ def processTEIFile(tei_file,linked_names):
 		output_card['author'] = { '@type': 'Person', '@id': 'http://viaf.org/viaf/44300868'}
 		print(output_card['@id'])
 #		print(root.xpath('/TEI/teiHeader/fileDesc/titleStmt/title/text()'))
-		output_card['name'] = root.xpath('/TEI/teiHeader/fileDesc/titleStmt/title/text()')
+		output_card['name'] = [ "Fiches bibliographiques des oeuvres de Marcel Proust 1959 - 1965", "Bibliographical cards: Works by Marcel Proust, 1959 - 1965" ]
 #		print(root.xpath('/TEI/teiHeader/fileDesc/editionStmt/edition/date/@when')[0])
 		output_card['dateCreated'] = getDate(root,'/TEI/teiHeader/fileDesc/editionStmt/edition/date/')
 		if not output_card['dateCreated']:
@@ -512,6 +521,7 @@ def processTEIFile(tei_file,linked_names):
 		output_card['@id'] = root.xpath('/TEI/@xml:id')[0]
 		output_card['@type'] = 'Dataset'
 		output_card['author'] = { '@type': 'Person', '@id': 'http://viaf.org/viaf/44300868'}
+		output_card['name'] = 'Chronologie'
 		output_card['temporalCoverage'] = getDate(root,'//head/date/')
 		if not output_card['temporalCoverage']:
 			del output_card['temporalCoverage']
