@@ -178,33 +178,35 @@ def getPages(text_string):
 		else:
 			last_page = None
 
+		if last_page and len(last_page) < len(first_page):
+			last_page = first_page[:len(first_page)-len(last_page)] + last_page
+
 		return first_page, last_page
 
 	return None, None
 
 def addLinkToCitation(new_citation,tei_file):
-	if 'isPartOf' in new_citation and ('name' in new_citation['isPartOf'] or ('isPartOf' in new_citation['isPartOf'] and 'name' in new_citation['isPartOf']['isPartOf'])):
-		journal_name = new_citation['isPartOf']['isPartOf']['name'] if 'isPartOf' in new_citation['isPartOf'] and 'name' in new_citation['isPartOf']['isPartOf'] else new_citation['isPartOf']['name']
+	if ('isPartOf' in new_citation and ('name' in new_citation['isPartOf'] or ('isPartOf' in new_citation['isPartOf'] and 'name' in new_citation['isPartOf']['isPartOf']))) or 'name' in new_citation:
+		if 'isPartOf' in new_citation and 'isPartOf' in new_citation['isPartOf'] and 'name' in new_citation['isPartOf']['isPartOf']:
+			journal_name = new_citation['isPartOf']['isPartOf']['name']
+			link_location = new_citation['isPartOf']['isPartOf']
+		elif 'isPartOf' in new_citation and 'name' in new_citation['isPartOf']:
+			journal_name = new_citation['isPartOf']['name']
+			link_location = new_citation['isPartOf']
+		else:
+			journal_name = new_citation['name']
+			link_location = new_citation
 
 		if journal_name.strip() == 'Figaro' or journal_name.strip() == 'Le Figaro':
 			if 'datePublished' in new_citation:
 				datetime_published = datetime.datetime.strptime(new_citation['datePublished'],'%Y-%m-%d')
-				if 'isPartOf' in new_citation['isPartOf'] and 'name' in new_citation['isPartOf']['isPartOf']:
-					new_citation['isPartOf']['isPartOf']['sameAs'] = 'http://gallica.bnf.fr/ark:/12148/cb34355551z/date' + new_citation['datePublished'][:4] + new_citation['datePublished'][5:7] + new_citation['datePublished'][8:] + '.item'
-					print(new_citation['isPartOf']['isPartOf']['sameAs'])
+				link_location['sameAs'] = 'http://gallica.bnf.fr/ark:/12148/cb34355551z/date' + new_citation['datePublished'][:4] + new_citation['datePublished'][5:7] + new_citation['datePublished'][8:] + '.item'
+				print(link_location['sameAs'])
 
-					with open('JournalLinks.csv','a') as outfile:
-						outfileWriter = csv.writer(outfile)
+				with open('JournalLinks.csv','a') as outfile:
+					outfileWriter = csv.writer(outfile)
 
-						outfileWriter.writerow([tei_file[tei_file.rfind('/')+1:],new_citation['isPartOf']['isPartOf']['sameAs']])
-				else:
-					new_citation['isPartOf']['sameAs'] = 'http://gallica.bnf.fr/ark:/12148/cb34355551z/date' + new_citation['datePublished'][:4] + new_citation['datePublished'][5:7] + new_citation['datePublished'][8:] + '.item'
-					print(new_citation['isPartOf']['sameAs'])
-
-					with open('JournalLinks.csv','a') as outfile:
-						outfileWriter = csv.writer(outfile)
-
-						outfileWriter.writerow([tei_file[tei_file.rfind('/')+1:],new_citation['isPartOf']['sameAs']])
+					outfileWriter.writerow([tei_file[tei_file.rfind('/')+1:],link_location['sameAs']])
 
 	return new_citation
 
@@ -254,7 +256,7 @@ def generateChronologyCitation(bibl_root,linked_names,tei_file):
 		else:
 			new_citation['@type'] = 'CreativeWork'
 			if ('es' in new_types or 're' in new_types) or 'a' in new_levels:
-				new_citation['headline'] = title.xpath('./text()')[0]
+				new_citation['headline'] = ' '.join(title.xpath('./text()')[0].strip().split())
 
 				new_citation['additionalType'] = 'Article'
 				page_start, page_end = getPages(text_data)
@@ -336,11 +338,11 @@ def getDate(root,path):
 def getTitle(root,path):
 	rs_title = root.xpath(path+'rs/text()')
 	if rs_title:
-		return rs_title[0]
+		return ' '.join(rs_title[0].strip().split())
 	else:
 		title = root.xpath(path+'text()')
 		if title:
-			return title[0]
+			return ' '.join(title[0].strip().split())
 		else:
 			return None
 
