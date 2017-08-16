@@ -185,14 +185,27 @@ def getPages(text_string):
 
 	return None, None
 
+def getTitle(root,path):
+	rs_title = root.xpath(path+'rs//text()')
+	if rs_title:
+		return ' '.join(' '.join(rs_title).strip().split())
+	else:
+		title = root.xpath(path+'/text()')
+		if title:
+			return ' '.join(' '.join(title).strip().split())
+		else:
+			return None
+
 def addLinkToCitation(new_citation,tei_file):
 	if ('isPartOf' in new_citation and ('name' in new_citation['isPartOf'] or ('isPartOf' in new_citation['isPartOf'] and 'name' in new_citation['isPartOf']['isPartOf']))) or 'name' in new_citation:
 		if 'isPartOf' in new_citation and 'isPartOf' in new_citation['isPartOf'] and 'name' in new_citation['isPartOf']['isPartOf']:
 			journal_name = new_citation['isPartOf']['isPartOf']['name']
-			link_location = new_citation['isPartOf']['isPartOf']
+			link_location = new_citation
+#			link_location = new_citation['isPartOf']['isPartOf']
 		elif 'isPartOf' in new_citation and 'name' in new_citation['isPartOf']:
 			journal_name = new_citation['isPartOf']['name']
-			link_location = new_citation['isPartOf']
+			link_location = new_citation
+#			link_location = new_citation['isPartOf']
 		else:
 			journal_name = new_citation['name']
 			link_location = new_citation
@@ -243,12 +256,14 @@ def generateChronologyCitation(bibl_root,linked_names,tei_file):
 				if issue_number:
 					new_citation['isPartOf']['issueNumber'] = issue_number
 
+				new_citation['isPartOf']['isPartOf'] = { '@type': 'PublicationVolume' }
+				new_citation['isPartOf']['isPartOf']['name'] = getTitle(title,'./')
+
 				volume_number = extractVolumeNumber(text_data)
 				if volume_number:
-					new_citation['isPartOf']['isPartOf'] = { '@type': 'PublicationVolume' }
 					new_citation['isPartOf']['isPartOf']['volumeNumber'] = volume_number
-					new_citation['isPartOf']['isPartOf']['name'] = title.xpath('./text()')[0]
-					print(new_citation['isPartOf']['isPartOf']['name'])
+				
+				print(new_citation['isPartOf']['isPartOf']['name'])
 
 			if 'isPartOf' in new_citation and 'isPartOf' in new_citation['isPartOf'] and 'issueNumber' in new_citation['isPartOf'] and 'volumeNumber' in new_citation['isPartOf']['isPartOf']:
 				new_citation['isPartOf']['name'] = new_citation['isPartOf']['isPartOf']['name'] + ', ' + new_citation['isPartOf']['isPartOf']['volumeNumber'] + ', ' + new_citation['isPartOf']['issueNumber']
@@ -256,7 +271,7 @@ def generateChronologyCitation(bibl_root,linked_names,tei_file):
 		else:
 			new_citation['@type'] = 'CreativeWork'
 			if ('es' in new_types or 're' in new_types) or 'a' in new_levels:
-				new_citation['headline'] = ' '.join(title.xpath('./text()')[0].strip().split())
+				new_citation['headline'] = getTitle(title,'./')
 
 				new_citation['additionalType'] = 'Article'
 				page_start, page_end = getPages(text_data)
@@ -265,7 +280,33 @@ def generateChronologyCitation(bibl_root,linked_names,tei_file):
 				if page_end:
 					new_citation['pageEnd'] = page_end
 			else:
-				new_citation['name'] = title.xpath('./text()')[0]
+				if 'j' in new_levels:
+					new_citation['additionalType'] = 'Article'
+					page_start, page_end = getPages(text_data)
+					if page_start:
+						new_citation['pageStart'] = page_start
+					if page_end:
+						new_citation['pageEnd'] = page_end
+
+					new_citation['isPartOf'] = { '@type': 'PublicationIssue' }
+					date_created = extractDateFromText(text_data)
+					if date_created:
+						new_citation['isPartOf']['dateCreated'] = date_created
+					issue_number = extractIssueNumber(text_data)
+					if issue_number:
+						new_citation['isPartOf']['issueNumber'] = issue_number
+
+					new_citation['isPartOf']['isPartOf'] = { '@type': 'PublicationVolume' }
+					new_citation['isPartOf']['isPartOf']['name'] = getTitle(title,'./')
+
+					volume_number = extractVolumeNumber(text_data)
+					if volume_number:
+						new_citation['isPartOf']['isPartOf']['volumeNumber'] = volume_number
+					
+					print(new_citation['isPartOf']['isPartOf']['name'])
+				else:
+					new_citation['name'] = getTitle(title,'./')
+
 
 		title_counter += 1
 
@@ -334,17 +375,6 @@ def getDate(root,path):
 				return extractDateFromText(text_dates[0])
 			else:
 				return None
-
-def getTitle(root,path):
-	rs_title = root.xpath(path+'rs/text()')
-	if rs_title:
-		return ' '.join(rs_title[0].strip().split())
-	else:
-		title = root.xpath(path+'text()')
-		if title:
-			return ' '.join(title[0].strip().split())
-		else:
-			return None
 
 def generateBibCitation(bibl_root,linked_names,tei_file):
 	new_citation = {}
@@ -445,6 +475,17 @@ def generateBibCitation(bibl_root,linked_names,tei_file):
 				new_citation['name'] = getTitle(title,'./')
 				if not new_citation['name']:
 					del new_citation['name']
+
+				if 'j' in new_levels:
+					new_citation['additionalType'] = 'Article'
+
+					new_pages = bibl_root.xpath('./biblScope[@type="pages"]/text()')
+					if new_pages:
+						page_start, page_end = getPages(new_pages[0])
+						if page_start:
+							new_citation['pageStart'] = page_start
+						if page_end:
+							new_citation['pageEnd'] = page_end
 
 		title_counter += 1
 
