@@ -212,14 +212,87 @@ def addLinkToCitation(new_citation,tei_file):
 
 		if journal_name.strip() == 'Figaro' or journal_name.strip() == 'Le Figaro':
 			if 'datePublished' in new_citation:
-				datetime_published = datetime.datetime.strptime(new_citation['datePublished'],'%Y-%m-%d')
 				link_location['sameAs'] = 'http://gallica.bnf.fr/ark:/12148/cb34355551z/date' + new_citation['datePublished'][:4] + new_citation['datePublished'][5:7] + new_citation['datePublished'][8:] + '.item'
 				print(link_location['sameAs'])
 
-				with open('JournalLinks.csv','a') as outfile:
-					outfileWriter = csv.writer(outfile)
+#				with open('JournalLinks.csv','a') as outfile:
+#					outfileWriter = csv.writer(outfile)
+#
+#					outfileWriter.writerow([tei_file[tei_file.rfind('/')+1:],link_location['sameAs']])
+		elif journal_name.strip() == 'Gaulois' or journal_name.strip() == 'Le Gaulois':
+			if 'datePublished' in new_citation:
+				link_location['sameAs'] = 'http://gallica.bnf.fr/ark:/12148/cb32779904b/date' + new_citation['datePublished'][:4] + new_citation['datePublished'][5:7] + new_citation['datePublished'][8:] + '.item'
+				print(link_location['sameAs'])
 
-					outfileWriter.writerow([tei_file[tei_file.rfind('/')+1:],link_location['sameAs']])
+#				with open('JournalLinks.csv','a') as outfile:
+#					outfileWriter = csv.writer(outfile)
+#
+#					outfileWriter.writerow([tei_file[tei_file.rfind('/')+1:],link_location['sameAs']])
+		elif journal_name.strip() == 'Journal des Debats' or journal_name.strip() == 'Le Journal des Debats' or normalize('NFC',journal_name.encode('utf-8').decode('utf-8').strip()) == normalize('NFC',u'Journal des Débats') or normalize('NFC',journal_name.encode('utf-8').decode('utf-8').strip()) == normalize('NFC',u'Le Journal des Débats'):
+			if 'datePublished' in new_citation:
+				link_location['sameAs'] = 'http://gallica.bnf.fr/ark:/12148/cb39294634r/date' + new_citation['datePublished'][:4] + new_citation['datePublished'][5:7] + new_citation['datePublished'][8:] + '.item'
+				print(link_location['sameAs'])
+
+#				with open('JournalLinks.csv','a') as outfile:
+#					outfileWriter = csv.writer(outfile)
+#
+#					outfileWriter.writerow([tei_file[tei_file.rfind('/')+1:],link_location['sameAs']])
+		elif journal_name.strip() == 'Echo de Paris' or journal_name.strip() == 'Écho de Paris' or journal_name.strip() == "L'Echo de Paris" or normalize('NFC',journal_name.encode('utf-8').decode('utf-8').strip()) == normalize('NFC',u'Écho de Paris') or normalize('NFC',journal_name.encode('utf-8').decode('utf-8').strip()) == normalize('NFC',u"L'Echo de Paris"):
+			if 'datePublished' in new_citation:
+				link_location['sameAs'] = 'http://gallica.bnf.fr/ark:/12148/cb34429768r/date' + new_citation['datePublished'][:4] + new_citation['datePublished'][5:7] + new_citation['datePublished'][8:] + '.item'
+				print(link_location['sameAs'])
+
+#				with open('JournalLinks.csv','a') as outfile:
+#					outfileWriter = csv.writer(outfile)
+#
+#					outfileWriter.writerow([tei_file[tei_file.rfind('/')+1:],link_location['sameAs']])
+		elif journal_name.strip() == 'Gil Blas':
+			if 'datePublished' in new_citation:
+				link_location['sameAs'] = 'http://gallica.bnf.fr/ark:/12148/cb344298410/date' + new_citation['datePublished'][:4] + new_citation['datePublished'][5:7] + new_citation['datePublished'][8:] + '.item'
+				print(link_location['sameAs'])
+
+#				with open('JournalLinks.csv','a') as outfile:
+#					outfileWriter = csv.writer(outfile)
+#
+#					outfileWriter.writerow([tei_file[tei_file.rfind('/')+1:],link_location['sameAs']])
+		elif journal_name.strip() == 'Le Temps' or journal_name.strip() == 'Temps':
+			if 'datePublished' in new_citation:
+				link_location['sameAs'] = 'http://gallica.bnf.fr/ark:/12148/cb34431794k/date' + new_citation['datePublished'][:4] + new_citation['datePublished'][5:7] + new_citation['datePublished'][8:] + '.item'
+				print(link_location['sameAs'])
+
+#				with open('JournalLinks.csv','a') as outfile:
+#					outfileWriter = csv.writer(outfile)
+#
+#					outfileWriter.writerow([tei_file[tei_file.rfind('/')+1:],link_location['sameAs']])
+		elif journal_name.strip() == 'La Presse':
+			if 'datePublished' in new_citation:
+				link_location['sameAs'] = 'http://gallica.bnf.fr/ark:/12148/cb34448033b/date' + new_citation['datePublished'][:4] + new_citation['datePublished'][5:7] + new_citation['datePublished'][8:] + '.item'
+				print(link_location['sameAs'])
+
+#				with open('JournalLinks.csv','a') as outfile:
+#					outfileWriter = csv.writer(outfile)
+#
+#					outfileWriter.writerow([tei_file[tei_file.rfind('/')+1:],link_location['sameAs']])
+		elif journal_name.strip() == 'Chronique des Arts et de la Curiosité' or journal_name.strip() == 'Chroniques des Arts et de la curiosité' or journal_name.strip() == 'Voir Chronique des Arts et de la curiosité' or journal_name.strip() == 'Chronique des Arts et de la curiosité' or normalize('NFC',journal_name.encode('utf-8').decode('utf-8').strip()) == normalize('NFC',u'Chronique des Arts et de la Curiosité') or normalize('NFC',journal_name.encode('utf-8').decode('utf-8').strip()) == normalize('NFC',u'Chroniques des Arts et de la curiosité') or normalize('NFC',journal_name.encode('utf-8').decode('utf-8').strip()) == normalize('NFC',u'Voir Chronique des Arts et de la curiosité') or normalize('NFC',journal_name.encode('utf-8').decode('utf-8').strip()) == normalize('NFC',u'Chronique des Arts et de la curiosité'):
+			if 'datePublished' in new_citation:
+				link_location['sameAs'] = 'http://gallica.bnf.fr/ark:/12148/cb34421972m/date' + new_citation['datePublished'][:4] + new_citation['datePublished'][5:7] + new_citation['datePublished'][8:] + '.item'
+				print(link_location['sameAs'])
+
+#				with open('JournalLinks.csv','a') as outfile:
+#					outfileWriter = csv.writer(outfile)
+#
+#					outfileWriter.writerow([tei_file[tei_file.rfind('/')+1:],link_location['sameAs']])
+		elif journal_name.strip() == 'The New York Herald' or journal_name.strip() == 'New York Herald':
+			if 'datePublished' in new_citation:
+				link_location['sameAs'] = 'http://fultonhistory.com/my%20photo%20albums/All%20Newspapers/New%20York%20NY%20Herald/New%20York%20NY%20Herald%20' + new_citation['datePublished'][:4] + '/index.html'
+
+				print(link_location['sameAs'])
+
+#				with open('JournalLinks.csv','a') as outfile:
+#					outfileWriter = csv.writer(outfile)
+#
+#					outfileWriter.writerow([tei_file[tei_file.rfind('/')+1:],link_location['sameAs']])
+
 
 	return new_citation
 
@@ -232,6 +305,12 @@ def generateChronologyCitation(bibl_root,linked_names,tei_file):
 	print(text_data)
 
 	new_titles = bibl_root.xpath('.//title')
+
+	if len(new_titles) > 1:
+		check_levels = bibl_root.xpath('.//title/@level')
+		if check_levels.count('j') > 1:
+			return new_citation
+
 	title_counter = 0
 	new_author = bibl_root.xpath('.//author/name/@key')
 	if new_author:
@@ -380,6 +459,12 @@ def generateBibCitation(bibl_root,linked_names,tei_file):
 	new_citation = {}
 	text_data = bibl_root.xpath('normalize-space(.)')
 	new_titles = bibl_root.xpath('.//title')
+
+	if len(new_titles) > 1:
+		check_levels = bibl_root.xpath('.//title/@level')
+		if check_levels.count('j') > 1:
+			return new_citation
+
 	title_counter = 0
 	new_author = bibl_root.xpath('.//author/name/@key')
 	if new_author:
@@ -672,9 +757,9 @@ def setupByOS():
 
 def main():
 	setupByOS()
-	with open('JournalLinks.csv','w') as outfile:
-		outfileWriter = csv.writer(outfile)
-		outfileWriter.writerow(['FILE',"LINK"])
+#	with open('JournalLinks.csv','w') as outfile:
+#		outfileWriter = csv.writer(outfile)
+#		outfileWriter.writerow(['FILE',"LINK"])
 
 	linked_names = getNameData()
 	traverseFullTree(processTEIFile,linked_names)
