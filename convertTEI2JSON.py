@@ -143,12 +143,7 @@ def getPages(text_string):
 		if first_dash < 0 and first_colon < 0 and first_comma < 0:
 			first_page = page_results_string
 		if first_colon > 0 and ((first_colon < first_dash or first_colon < first_comma) or (first_dash < 0 and first_comma < 0)):
-			if (first_comma < 0 and first_dash > 0) or (first_dash > 0 and first_dash < first_comma):
-				first_page = page_results_string[first_colon+1:first_dash]
-			elif (first_dash < 0 and first_comma > 0) or (first_comma > 0 and first_comma < first_dash):
-				first_page = page_results_string[first_colon+1:first_comma]
-			else:
-				first_page = page_results_string[first_colon+1:]
+			first_page = page_results_string[:first_colon]
 		elif first_colon < 0 or (first_dash > 0 and first_dash < first_colon) or (first_comma > 0 and first_comma < first_colon):
 			if (first_dash < first_comma and first_dash > 0) or (first_dash > 0 and first_comma < 0):
 				first_page = page_results_string[:first_dash]
@@ -172,7 +167,7 @@ def getPages(text_string):
 			last_page = page_results_string[last_dash+1:]
 		elif last_comma >= first_comma and last_comma > last_dash:
 			if last_colon > last_comma:
-				last_page = page_results_string[last_colon+1:]
+				last_page = page_results_string[last_comma+2:last_colon]
 			else:
 				last_page = page_results_string[last_comma+2:]
 		else:
@@ -314,7 +309,7 @@ def generateChronologyCitation(bibl_root,linked_names,tei_file):
 	title_counter = 0
 	new_author = bibl_root.xpath('.//author/name/@key')
 	if new_author:
-		new_citation['author'] = { '@type': 'Person', '@id': 'catalogdata.library.illinois.edu/lod/entities/Persons/kp/' + new_author[0] }
+		new_citation['author'] = { '@type': 'Person', '@id': 'http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/' + new_author[0] }
 
 	date_published = extractDateFromText(text_data)
 	if date_published:
@@ -349,23 +344,19 @@ def generateChronologyCitation(bibl_root,linked_names,tei_file):
 
 		else:
 			new_citation['@type'] = 'CreativeWork'
+			page_start, page_end = getPages(text_data)
+			if page_start:
+				new_citation['pageStart'] = page_start
+			if page_end:
+				new_citation['pageEnd'] = page_end
+
 			if ('es' in new_types or 're' in new_types) or 'a' in new_levels:
 				new_citation['headline'] = getTitle(title,'./')
 
-				new_citation['additionalType'] = 'Article'
-				page_start, page_end = getPages(text_data)
-				if page_start:
-					new_citation['pageStart'] = page_start
-				if page_end:
-					new_citation['pageEnd'] = page_end
+				new_citation['additionalType'] = 'http://schema.org/Article'
 			else:
 				if 'j' in new_levels:
-					new_citation['additionalType'] = 'Article'
-					page_start, page_end = getPages(text_data)
-					if page_start:
-						new_citation['pageStart'] = page_start
-					if page_end:
-						new_citation['pageEnd'] = page_end
+					new_citation['additionalType'] = 'http://schema.org/Article'
 
 					new_citation['isPartOf'] = { '@type': 'PublicationIssue' }
 					date_created = extractDateFromText(text_data)
@@ -394,7 +385,7 @@ def generateChronologyCitation(bibl_root,linked_names,tei_file):
 		cor_volume = cor_find.group(0)[6:-1]
 		new_citation['@type'] = 'CreativeWork'
 		new_citation['name'] = 'Correspondance'
-		new_citation['author'] = { '@type': 'Person', '@id': 'catalogdata.library.illinois.edu/lod/entities/Persons/kp/proust1' }
+		new_citation['author'] = { '@type': 'Person', '@id': 'http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/proust1' }
 		new_citation['isPartOf'] = { '@type': 'PublicationVolume', 'volumeNumber': cor_volume }
 		new_citation['editor'] = { '@type': 'Person', '@id': 'http://viaf.org/viaf/44300868'}
 		new_citation['datePublished'] = '1970--1993'
@@ -468,13 +459,13 @@ def generateBibCitation(bibl_root,linked_names,tei_file):
 	title_counter = 0
 	new_author = bibl_root.xpath('.//author/name/@key')
 	if new_author:
-		new_citation['author'] = { '@type': 'Person', '@id': 'catalogdata.library.illinois.edu/lod/entities/Persons/kp/' + new_author[0] }
+		new_citation['author'] = { '@type': 'Person', '@id': 'http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/' + new_author[0] }
 	else:
 		new_authors = bibl_root.xpath('.//author/name/text()')
 		if new_authors:
 			for author in new_authors:
 				if author in linked_names[1]:
-					new_citation['author'] = { '@type': 'Person', '@id': 'catalogdata.library.illinois.edu/lod/entities/Persons/kp/' + linked_names[0][linked_names[1].index(author)] }
+					new_citation['author'] = { '@type': 'Person', '@id': 'http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/' + linked_names[0][linked_names[1].index(author)] }
 					print("FOUND AUTHOR IN CITATION")
 					print(author)
 					print(linked_names[0][linked_names[1].index(author)])
@@ -542,35 +533,27 @@ def generateBibCitation(bibl_root,linked_names,tei_file):
 
 		else:
 			new_citation['@type'] = 'CreativeWork'
+			new_pages = bibl_root.xpath('./biblScope[@type="pages"]/text()')
+			if new_pages:
+				page_start, page_end = getPages(new_pages[0])
+				if page_start:
+					new_citation['pageStart'] = page_start
+				if page_end:
+					new_citation['pageEnd'] = page_end
+
 			if ('es' in new_types or 're' in new_types) or 'a' in new_levels:
 				new_citation['headline'] = getTitle(title,'./')
 				if not new_citation['headline']:
 					del new_citation['headline']
 				else:
-					new_citation['additionalType'] = 'Article'
-
-					new_pages = bibl_root.xpath('./biblScope[@type="pages"]/text()')
-					if new_pages:
-						page_start, page_end = getPages(new_pages[0])
-						if page_start:
-							new_citation['pageStart'] = page_start
-						if page_end:
-							new_citation['pageEnd'] = page_end
+					new_citation['additionalType'] = 'http://schema.org/Article'
 			else:
 				new_citation['name'] = getTitle(title,'./')
 				if not new_citation['name']:
 					del new_citation['name']
 
 				if 'j' in new_levels:
-					new_citation['additionalType'] = 'Article'
-
-					new_pages = bibl_root.xpath('./biblScope[@type="pages"]/text()')
-					if new_pages:
-						page_start, page_end = getPages(new_pages[0])
-						if page_start:
-							new_citation['pageStart'] = page_start
-						if page_end:
-							new_citation['pageEnd'] = page_end
+					new_citation['additionalType'] = 'http://schema.org/Article'
 
 		title_counter += 1
 
@@ -586,18 +569,21 @@ def processTEIFile(tei_file,linked_names):
 		'@context': [ 
 			'http://schema.org/',
 			{
-				's': 'http://schema.org/',
-				'scp': 'http://ns.library.illinois.edu/scp'
+				'temporalCoverage': {
+					'@id': 'schema:temporalCoverage',
+					'@type': 'Date'
+				}
 			}
 		]
 	}
 #	print(card)
 	root = etree.fromstring(card)
 
+	output_card['@id'] = 'http://kolbproust.library.illinois.edu/proust/data/' + tei_file[:-4]
+
 	card_type = tei_file[tei_file.rfind('/')+1:][0]
 	if card_type == 's' or card_type == 'p':
 		#bibliography
-		output_card['@id'] = root.xpath('/TEI/@xml:id')[0]
 		output_card['@type'] = 'Dataset'
 		output_card['author'] = { '@type': 'Person', '@id': 'http://viaf.org/viaf/44300868'}
 		print(output_card['@id'])
@@ -624,7 +610,7 @@ def processTEIFile(tei_file,linked_names):
 		for t in titles:
 			output_card['mentions'].append({ '@type': 'CreativeWork', 'name': t.xpath('normalize-space(.)') })
 #		output_card['mentions'] = [ { '@type': 'CreativeWork', 'title': x } for x in ( root.xpath('/TEI/text/body/div2/p/title/rs[normalize-space()]') + root.xpath('/TEI/text/body/div2/note/title/rs[normalize-space()]') if len(root.xpath('/TEI/text/body/div2/p/title/rs[normalize-space()]') + root.xpath('/TEI/text/body/div2/note/title/rs[normalize-space()]')) > 0 else root.xpath('/TEI/text/body/div2/p/title[normalize-space()]') + root.xpath('/TEI/text/body/div2/note/title[normalize-space()]') ) ]
-		output_card['mentions'] += [ { '@type': 'Person', '@id': 'catalogdata.library.illinois.edu/lod/entities/Persons/kp/' + x } for x in root.xpath('/TEI/text/body/div2/p/name/@key') + root.xpath('/TEI/text/body/div2/note/name/@key') if x in linked_names[0] ]
+		output_card['mentions'] += [ { '@type': 'Person', '@id': 'http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/' + x } for x in root.xpath('/TEI/text/body/div2/p/name/@key') + root.xpath('/TEI/text/body/div2/note/name/@key') if x in linked_names[0] ]
 		print(output_card['mentions'])
 		if len(output_card['mentions']) == 1:
 			output_card['mentions'] = output_card['mentions'][0]
@@ -646,7 +632,6 @@ def processTEIFile(tei_file,linked_names):
 			print(output_card['@id'])
 	else:
 		#chronology
-		output_card['@id'] = root.xpath('/TEI/@xml:id')[0]
 		output_card['@type'] = 'Dataset'
 		output_card['author'] = { '@type': 'Person', '@id': 'http://viaf.org/viaf/44300868'}
 		output_card['name'] = 'Chronologie'
@@ -665,7 +650,7 @@ def processTEIFile(tei_file,linked_names):
 			output_card['mentions'].append({ '@type': 'CreativeWork', 'name': t.xpath('normalize-space(.)') })
 #			print(t.xpath('normalize-space(.)'))
 #		output_card['mentions'] = [ { '@type': 'CreativeWork', 'title': x } for x in root.xpath('//div1//p/title[normalize-space(.)]') + root.xpath('//div1//note/title[normalize-space(.)]') ]
-		output_card['mentions'] += [ { '@type': 'Person', '@id': 'catalogdata.library.illinois.edu/lod/entities/Persons/kp/' + x } for x in root.xpath('//div1//p/name/@key') + root.xpath('//div1//note/name/@key') if x in linked_names[0] ]
+		output_card['mentions'] += [ { '@type': 'Person', '@id': 'http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/' + x } for x in root.xpath('//div1//p/name/@key') + root.xpath('//div1//note/name/@key') if x in linked_names[0] ]
 #		output_card['mentions'] += [ { '@type': 'Person', '@id': 'catalogdata.library.illinois.edu/lod/entities/Persons/kp/' + linked_names[0][linked_names[1].index(x)] } for x in root.xpath('//div1//p/name/text()') + root.xpath('//div1//note/name/text()') if x in linked_names[1] ]
 		print("MENTIONS")
 		print(output_card['mentions'])
@@ -683,7 +668,6 @@ def processTEIFile(tei_file,linked_names):
 
 		if 'citation' in output_card:
 			print(tei_file)
-
 
 	return json.dumps(output_card,indent=4,ensure_ascii=False).encode('utf-8')
 
@@ -720,6 +704,50 @@ def writeNewFile(file_path,copy=False,file_contents=None):
 		with open(file_path,'w') as writefile:
 			writefile.write(file_contents)
 
+def addJournalLinksToXML(file_name):
+	with open(file_name,'rb') as infile:
+		card = infile.read()
+
+	root = etree.fromstring(card)
+	bibls = root.xpath('//bibl')
+	for bibl in bibls:
+		titles = bibl.xpath('.//title/text()')
+		text_data = bibl.xpath('normalize-space(.)')
+		date_published = extractDateFromText(text_data)
+
+		if date_published and len(titles) > 0:
+			processed_names = [ x.strip() for x in titles ]
+			normalized_names = [ normalize('NFC',y.encode('utf-8').decode('utf-8').strip()) for y in processed_names ]
+			
+			link = None
+			if 'Figaro' in processed_names or 'Le Figaro' in processed_names:
+				link = 'http://gallica.bnf.fr/ark:/12148/cb34355551z/date' + date_published[:4] + date_published[5:7] + date_published[8:] + '.item'
+			elif 'Gaulois' in processed_names or 'Le Gaulois' in processed_names:
+				link = 'http://gallica.bnf.fr/ark:/12148/cb32779904b/date' + date_published[:4] + date_published[5:7] + date_published[8:] + '.item'
+			elif 'Journal des Debats' in processed_names or 'Le Journal des Debats' in processed_names or normalize('NFC',u'Journal des Débats') in normalized_names or normalize('NFC',u'Le Journal des Débats') in normalized_names:
+				link = 'http://gallica.bnf.fr/ark:/12148/cb39294634r/date' + date_published[:4] + date_published[5:7] + date_published[8:] + '.item'
+			elif 'Echo de Paris' in processed_names or 'Écho de Paris' in processed_names or "L'Echo de Paris" in processed_names or normalize('NFC',u'Écho de Paris') in normalized_names or normalize('NFC',u"L'Echo de Paris") in normalized_names:
+				link = 'http://gallica.bnf.fr/ark:/12148/cb34429768r/date' + date_published[:4] + date_published[5:7] + date_published[8:] + '.item'
+			elif 'Gil Blas' in processed_names:
+				link = 'http://gallica.bnf.fr/ark:/12148/cb344298410/date' + date_published[:4] + date_published[5:7] + date_published[8:] + '.item'
+			elif 'Le Temps' in processed_names or 'Temps' in processed_names:
+				link = 'http://gallica.bnf.fr/ark:/12148/cb34431794k/date' + date_published[:4] + date_published[5:7] + date_published[8:] + '.item'
+			elif 'La Presse' in processed_names:
+				link = 'http://gallica.bnf.fr/ark:/12148/cb34448033b/date' + date_published[:4] + date_published[5:7] + date_published[8:] + '.item'
+			elif 'Chronique des Arts et de la Curiosité' in processed_names or 'Chroniques des Arts et de la curiosité' in processed_names or 'Voir Chronique des Arts et de la curiosité' in processed_names or 'Chronique des Arts et de la curiosité' in processed_names or normalize('NFC',u'Chronique des Arts et de la Curiosité') in normalized_names or normalize('NFC',u'Chroniques des Arts et de la curiosité') in normalized_names or normalize('NFC',u'Voir Chronique des Arts et de la curiosité') in normalized_names or normalize('NFC',u'Chronique des Arts et de la curiosité') in normalized_names:
+				link = 'http://gallica.bnf.fr/ark:/12148/cb34421972m/date' + date_published[:4] + date_published[5:7] + date_published[8:] + '.item'
+			elif 'The New York Herald' in processed_names or 'New York Herald' in processed_names:
+				link = 'http://fultonhistory.com/my%20photo%20albums/All%20Newspapers/New%20York%20NY%20Herald/New%20York%20NY%20Herald%20' + date_published[:4] + '/index.html'
+
+			if link:
+				ref = etree.Element('ref', target=link)
+				ref.extend(bibl)
+				bibl.append(ref)
+
+	revised_string = etree.tostring(root, pretty_print=True, encoding='unicode')
+
+	with open(file_name,'wb') as outfile:
+		outfile.write(revised_string.encode('utf-8'))
 
 def traverseFullTree(processorFunction,linked_names):
 	rootdir = 'tei'
@@ -732,6 +760,7 @@ def traverseFullTree(processorFunction,linked_names):
 					writeNewFile(results_folder_name+root[3:]+SLASH+name,copy=True)
 				else:
 					writeNewFile(results_folder_name+root[3:]+SLASH+name,copy=True)
+					addJournalLinksToXML(results_folder_name+root[3:]+SLASH+name)
 					writeNewFile(results_folder_name+root[3:]+SLASH+name[:-3]+'json',file_contents=processorFunction(root+SLASH+name,linked_names))
 
 def getNameData():
