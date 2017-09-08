@@ -26,7 +26,7 @@ def buildNewOutput(output_directory):
 	with open(output_directory + '/' + core_name + '.ttl.graph','w') as graph_write_file:
 		graph_write_file.write('http://localhost:8890/DAV/')
 
-	output_text = 'PREFIX schema: <http://http://schema.org/>\n\n'
+	output_text = 'PREFIX schema: <http://schema.org/>\n\n'
 	with open(output_directory + '/' + core_name + '.ttl','w') as write_file:
 		write_file.write(output_text.encode('utf-8'))
 
@@ -45,16 +45,16 @@ def addCardsToTurtle(read_file):
 	end_text = ''
 	output_text = '\n<' + card['@id'] + '>\n'
 	output_text += '\ta\tschema:' + card['@type'] + ' ;\n'
-	output_text += '\tschema:temporalCoverage\t' + card['temporalCoverage'] + '^^schema:Date ;\n'
+	output_text += '\tschema:temporalCoverage\t"' + card['temporalCoverage'] + '"^^schema:Date ;\n'
 
 	if 'dateCreated' in card:
-		output_text += '\tschema:dateCreated\t' + card['dateCreated'] + '^^schema:Date ;\n'
+		output_text += '\tschema:dateCreated\t"' + card['dateCreated'] + '"^^schema:Date ;\n'
 
 	if type(card['name']) is list:
-		output_text += '\tschema:name\t' + card['name'][0] + ' ;\n'
-		output_text += '\tschema:name\t' + card['name'][1] + ' ;\n'
+		output_text += '\tschema:name\t"' + card['name'][0].replace('"','\\"') + '" ;\n'
+		output_text += '\tschema:name\t"' + card['name'][1].replace('"','\\"') + '" ;\n'
 	else:
-		output_text += '\tschema:name\t' + card['name'] + ' ;\n'
+		output_text += '\tschema:name\t"' + card['name'].replace('"','\\"') + '" ;\n'
 	output_text += '\tschema:author\t<' + card['author']['@id'] + '> ;\n'
 
 	if 'mentions' in card:
@@ -65,7 +65,7 @@ def addCardsToTurtle(read_file):
 				else:
 					output_text += '\tschema:mentions\t[\n'
 					output_text += '\t\ta\tschema:CreativeWork ;\n'
-					output_text += '\t\tschema:name\t' + instance['name'] + ' ;\n'
+					output_text += '\t\tschema:name\t"' + instance['name'].replace('"','\\"') + '" ;\n'
 					output_text += '\t] ;\n'
 		else:
 			if '@id' in card['mentions']:
@@ -73,7 +73,7 @@ def addCardsToTurtle(read_file):
 			else:
 				output_text += '\tschema:mentions\t[\n'
 				output_text += '\t\ta\tschema:CreativeWork ;\n'
-				output_text += '\t\tschema:name\t' + card['mentions']['name'] + '\n'
+				output_text += '\t\tschema:name\t"' + card['mentions']['name'].replace('"','\\"') + '"\n'
 				output_text += '\t] ;\n'
 
 	if 'citation' in card:
@@ -84,15 +84,15 @@ def addCardsToTurtle(read_file):
 				if 'additionalType' in citation:
 					output_text += '\t\tschema:additionalType\t<' + citation['additionalType'] + '> ;\n'
 				if 'datePublished' in citation:
-					output_text += '\t\tschema:datePublished\t' + citation['datePublished'] + '^^schema:Date ;\n'
+					output_text += '\t\tschema:datePublished\t"' + citation['datePublished'] + '"^^schema:Date ;\n'
 				if 'author' in citation:
 					output_text += '\t\tschema:author\t<' + citation['author']['@id'] + '> ;\n'
 				if 'editor' in citation:
 					output_text += '\t\tschema:editor\t<' + citation['editor']['@id'] + '> ;\n'
 				if 'name' in citation:
-					output_text += '\t\tschema:name\t' + citation['name'] + ' ;\n'
+					output_text += '\t\tschema:name\t"' + citation['name'].replace('"','\\"') + '" ;\n'
 				if 'headline' in citation:
-					output_text += '\t\tschema:headline\t' + citation['headline'] + ' ;\n'
+					output_text += '\t\tschema:headline\t"' + citation['headline'].replace('"','\\"') + '" ;\n'
 				if 'sameAs' in citation:
 					output_text += '\t\tschema:sameAs\t<' + citation['sameAs'] + '> ;\n'
 				if 'pageStart' in citation:
@@ -102,15 +102,15 @@ def addCardsToTurtle(read_file):
 
 				if 'isPartOf' in citation:
 					output_text += '\t\tschema:isPartOf\t[\n'
-					output_text += '\t\t\ta\t' + citation['isPartOf']['@type'] + ' ;\n'
+					output_text += '\t\t\ta\tschema:' + citation['isPartOf']['@type'] + ' ;\n'
 					if 'dateCreated' in citation['isPartOf']:
-						output_text += '\t\t\tschema:dateCreated\t' + citation['isPartOf']['dateCreated'] + '^^schema:Date ;\n'
+						output_text += '\t\t\tschema:dateCreated\t"' + citation['isPartOf']['dateCreated'] + '"^^schema:Date ;\n'
 					if 'issueNumber' in citation['isPartOf']:
-						output_text += '\t\t\tschema:issueNumber\t' + citation['isPartOf']['issueNumber'] + ' ;\n'
+						output_text += '\t\t\tschema:issueNumber\t"' + citation['isPartOf']['issueNumber'].replace('"','\\"') + '" ;\n'
 					if 'volumeNumber' in citation['isPartOf']:
-						output_text += '\t\t\tschema:volumeNumber\t' + citation['isPartOf']['volumeNumber'] + ' ;\n'
+						output_text += '\t\t\tschema:volumeNumber\t"' + citation['isPartOf']['volumeNumber'].replace('"','\\"') + '" ;\n'
 					if 'name' in citation['isPartOf']:
-						output_text += '\t\t\tschema:name\t' + citation['isPartOf']['name'] + ' ;\n'
+						output_text += '\t\t\tschema:name\t"' + citation['isPartOf']['name'].replace('"','\\"') + '" ;\n'
 					if 'pageStart' in citation['isPartOf']:
 						output_text += '\t\t\tschema:pageStart\t' + citation['isPartOf']['pageStart'] + ' ;\n'
 					if 'pageEnd' in citation['isPartOf']:
@@ -118,16 +118,69 @@ def addCardsToTurtle(read_file):
 
 					if 'isPartOf' in citation['isPartOf']:
 						output_text += '\t\t\tschema:isPartOf\t[\n'
-						output_text += '\t\t\t\ta\t' + citation['isPartOf']['isPartOf']['@type'] + ' ;\n'
+						output_text += '\t\t\t\ta\tschema:' + citation['isPartOf']['isPartOf']['@type'] + ' ;\n'
 						if 'name' in citation['isPartOf']['isPartOf']:
-							output_text += '\t\t\t\tschema:name\t' + citation['isPartOf']['isPartOf']['name'] + ' ;\n'
+							output_text += '\t\t\t\tschema:name\t"' + citation['isPartOf']['isPartOf']['name'].replace('"','\\"') + '" ;\n'
 						if 'volumeNumber' in citation['isPartOf']['isPartOf']:
-							output_text += '\t\t\t\tschema:volumeNumber\t' + citation['isPartOf']['isPartOf']['volumeNumber'] + ' ;\n'
+							output_text += '\t\t\t\tschema:volumeNumber\t"' + citation['isPartOf']['isPartOf']['volumeNumber'].replace('"','\\"') + '" ;\n'
 						output_text += '\t\t\t] ;\n'
 					output_text += '\t\t] ;\n'
 
 				output_text += '\t] ;\n'
 				print citation
+		else:
+			output_text += '\tschema:citation\t[\n'
+			output_text += '\t\ta\tschema:CreativeWork ;\n'
+			if 'additionalType' in card['citation']:
+				output_text += '\t\tschema:additionalType\t<' + card['citation']['additionalType'] + '> ;\n'
+			if 'datePublished' in card['citation']:
+				output_text += '\t\tschema:datePublished\t"' + card['citation']['datePublished'] + '"^^schema:Date ;\n'
+			if 'author' in card['citation']:
+				output_text += '\t\tschema:author\t<' + card['citation']['author']['@id'] + '> ;\n'
+			if 'editor' in card['citation']:
+				output_text += '\t\tschema:editor\t<' + card['citation']['editor']['@id'] + '> ;\n'
+			if 'name' in card['citation']:
+				output_text += '\t\tschema:name\t"' + card['citation']['name'].replace('"','\\"') + '" ;\n'
+			if 'headline' in card['citation']:
+				output_text += '\t\tschema:headline\t"' + card['citation']['headline'].replace('"','\\"') + '" ;\n'
+			if 'sameAs' in card['citation']:
+				output_text += '\t\tschema:sameAs\t<' + card['citation']['sameAs'] + '> ;\n'
+			if 'pageStart' in card['citation']:
+				output_text += '\t\tschema:pageStart\t' + card['citation']['pageStart'] + ' ;\n'
+			if 'pageEnd' in card['citation']:
+				output_text += '\t\tschema:pageEnd\t' + card['citation']['pageEnd'] + ' ;\n'
+
+			if 'isPartOf' in card['citation']:
+				output_text += '\t\tschema:isPartOf\t[\n'
+				output_text += '\t\t\ta\tschema:' + card['citation']['isPartOf']['@type'] + ' ;\n'
+				if 'dateCreated' in card['citation']['isPartOf']:
+					output_text += '\t\t\tschema:dateCreated\t"' + card['citation']['isPartOf']['dateCreated'] + '"^^schema:Date ;\n'
+				if 'issueNumber' in card['citation']['isPartOf']:
+					output_text += '\t\t\tschema:issueNumber\t"' + card['citation']['isPartOf']['issueNumber'].replace('"','\\"') + '" ;\n'
+				if 'volumeNumber' in card['citation']['isPartOf']:
+					output_text += '\t\t\tschema:volumeNumber\t"' + card['citation']['isPartOf']['volumeNumber'].replace('"','\\"') + '" ;\n'
+				if 'name' in card['citation']['isPartOf']:
+					output_text += '\t\t\tschema:name\t"' + card['citation']['isPartOf']['name'].replace('"','\\"') + '" ;\n'
+				if 'pageStart' in card['citation']['isPartOf']:
+					output_text += '\t\t\tschema:pageStart\t' + card['citation']['isPartOf']['pageStart'] + ' ;\n'
+				if 'pageEnd' in card['citation']['isPartOf']:
+					output_text += '\t\t\tschema:pageEnd\t' + card['citation']['isPartOf']['pageEnd'] + ' ;\n'
+
+				if 'isPartOf' in card['citation']['isPartOf']:
+					output_text += '\t\t\tschema:isPartOf\t[\n'
+					output_text += '\t\t\t\ta\tschema:' + card['citation']['isPartOf']['isPartOf']['@type'] + ' ;\n'
+					if 'name' in card['citation']['isPartOf']['isPartOf']:
+						output_text += '\t\t\t\tschema:name\t"' + card['citation']['isPartOf']['isPartOf']['name'].replace('"','\\"') + '" ;\n'
+					if 'volumeNumber' in card['citation']['isPartOf']['isPartOf']:
+						output_text += '\t\t\t\tschema:volumeNumber\t"' + card['citation']['isPartOf']['isPartOf']['volumeNumber'].replace('"','\\"') + '" ;\n'
+					output_text += '\t\t\t] ;\n'
+				output_text += '\t\t] ;\n'
+
+			output_text += '\t] ;\n'
+
+			print card['citation']
+
+	output_text = output_text[:-2] + '.\n'
 
 	return output_text
 

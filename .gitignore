@@ -1,5 +1,9 @@
 tei/
+ttl/
+names/
 __pycache__/
+name_fields.txt
 ~$pping-TEI.docx
 *.sublime-workspace
 *.sublime-project
+*.zip
