@@ -59,7 +59,7 @@ def addPersonToTurtle(person):
 		for jt in job_title_list:
 			output_text += '\tschema:jobTitle\t"' + jt.strip() + '" ;\n'
 	if 'givenName' in person:
-		output_text += '\tschema:givenName\t"' + person['givenName'] + '" ;\n'
+		output_text += '\tschema:givenName\t"' + person['givenName'].replace('"','\\"') + '" ;\n'
 	if 'familyName' in person:
 		if type(person['familyName']) is list:
 			for family_name in person['familyName']:

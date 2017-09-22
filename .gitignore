@@ -1,8 +1,10 @@
 tei/
 ttl/
 names/
+name_ttl/
 __pycache__/
 name_fields.txt
+name_coocurrences.csv
 ~$pping-TEI.docx
 *.sublime-workspace
 *.sublime-project
