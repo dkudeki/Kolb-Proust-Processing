@@ -50,13 +50,13 @@ def getTextFromCard(filename,ignore_words,master_word_list):
 			word_count += len(tokens)
 
 #			Very slow code. Comment out this block to run faster			
-			tagged_tokens = tagger.tag(tokens)
-			for tagged in tagged_tokens:
-				if tagged[1] != u'O':
-					if tagged[0] not in names:
-						names[tagged[0]] = 1
-					else:
-						names[tagged[0]] += 1
+#			tagged_tokens = tagger.tag(tokens)
+#			for tagged in tagged_tokens:
+#				if tagged[1] != u'O':
+#					if tagged[0] not in names:
+#						names[tagged[0]] = 1
+#					else:
+#						names[tagged[0]] += 1
 
 			for token in tokens:
 				if token.lower() not in ignore_words and token not in names and isntNumber(token):
@@ -132,6 +132,9 @@ def determineRarity(master_word_list,total_length,french_dataset):
 	return word_frequency_ratio
 
 def outputResults(data,filename,wfr=None):
+	if not os.path.exists('./nlp_output'):
+		os.makedirs('nlp_output')
+
 	with open('nlp_output/' + filename,'w') as outfile:
 		writer = csv.writer(outfile)
 
@@ -175,15 +178,15 @@ def traverseFullTree():
 	french_dataset = getLeipzigDataset()
 	word_frequency_ratio = determineRarity(master_word_list,total_length,french_dataset)
 
-	outputResults(master_word_list,'monograms.csv',word_frequency_ratio)
+	outputResults(master_word_list,'1-grams.csv',word_frequency_ratio)
 	bigrams = getNgrams(2,all_text)
-	outputResults(bigrams,'bigrams.csv')
+	outputResults(bigrams,'2-grams.csv')
 	trigrams = getNgrams(3,all_text)
-	outputResults(trigrams,'trigrams.csv')
+	outputResults(trigrams,'3-grams.csv')
 	quadgrams = getNgrams(4,all_text)
-	outputResults(quadgrams,'quadgrams.csv')
+	outputResults(quadgrams,'4-grams.csv')
 	outputResults(getCapitals(master_word_list),'name_counts.csv')
-	outputResults(names,'named_entity_counts.csv')
+#	outputResults(names,'named_entity_counts.csv')
 
 #On Windows, the Command Prompt doesn't know how to display unicode characters, causing it to halt when it encounters non-ASCII characters
 def setupByOS():
