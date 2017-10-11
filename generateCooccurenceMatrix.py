@@ -120,19 +120,26 @@ def traverseFullTree():
 											if other_mention0 not in card_families:
 												card_families.append(other_mention0)
 
-					for fam in card_families:
-						for fam2 in card_families:
-							if fam != fam2:
-								print(fam,fam2)
-								family_rows[fam][family_column_numbers[fam2]] += 1
+						for fam_index in range(0,len(card_families)):
+							for fam2_index in range(fam_index+1,len(card_families)):
+								print(card_families[fam_index],card_families[fam2_index])
+								family_rows[card_families[fam_index]][family_column_numbers[card_families[fam2_index]]] += 1
+								family_rows[card_families[fam2_index]][family_column_numbers[card_families[fam_index]]] += 1
 								family_coocurrence_count += 1
+
+							family_rows[card_families[fam_index]][family_column_numbers[card_families[fam_index]]] += 1	
+					else:
+						if card['mentions']['@type'] == 'Person':
+							if isFamilyMember(family_ids,card['mentions']['@id'][64:]):
+								mention0 = getFamilyId(card['mentions']['@id'][64:])
+								family_rows[mention0][family_column_numbers[mention0]] += 1
 
 	print(person_ids)
 	print(len(person_ids))
 	outputSpreadsheet(rows,person_ids,'coocurrences.csv')
 	outputSpreadsheet(family_rows,family_ids,'coocurrences_family.csv')
 	print(coocurrence_count/2)
-	print(family_coocurrence_count/2)
+	print(family_coocurrence_count)
 
 def getFamilies():
 	family_ids = []

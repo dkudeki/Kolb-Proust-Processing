@@ -1,942 +1,942 @@
 {
     "nodes": [
         {
-            "group": 1, 
+            "mention_count": 22, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/adam0", 
             "name": "Adam, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 24, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/agosti0", 
             "name": "Agostinelli, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 16, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/alton0", 
             "name": "Alton, famille d'"
         }, 
         {
-            "group": 1, 
+            "mention_count": 62, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/arman0", 
             "name": "Arman de Caillavet, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 5, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/atthal0", 
             "name": "Laurent-Atthalin, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 33, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/baigne0", 
             "name": "Baign\u00e8res, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 11, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/bardac0", 
             "name": "Bardac, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 1, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/barris0", 
             "name": "Barrison, les soeurs"
         }, 
         {
-            "group": 1, 
+            "mention_count": 1, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/bassan0", 
             "name": "Bassano, famille de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 0, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/bauffr0", 
             "name": "Bauffremont, famille de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 5, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/baye0", 
             "name": "Baye, famille de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 25, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/beer0", 
             "name": "Beer, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 3, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/bernhe0", 
             "name": "Bernheim, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 5, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/bessie0", 
             "name": "Bessi\u00e8re, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 238, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/bibesc0", 
             "name": "Bibesco, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 60, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/billy0", 
             "name": "Billy, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 15, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/bischo0", 
             "name": "Bischoffsheim, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 1, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/blache0", 
             "name": "Blache, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 24, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/blum0", 
             "name": "Blum, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 6, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/blumen0", 
             "name": "Blumenthal, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 0, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/boeuf0", 
             "name": "Boeuf, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 0, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/boreve0", 
             "name": "Bor\u00e9-Verrier, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 125, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/branco0", 
             "name": "Brancovan, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 33, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/brante0", 
             "name": "Brantes, famille de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 1, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/bregue0", 
             "name": "Breguet, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 0, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/bres0", 
             "name": "Br\u00e8s, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 4, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/breteu0", 
             "name": "Breteuil, famille de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 5, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/breuil0", 
             "name": "Breuil de Saint-Germain, famille du"
         }, 
         {
-            "group": 1, 
+            "mention_count": 0, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/brienn0", 
             "name": "Brienne"
         }, 
         {
-            "group": 1, 
+            "mention_count": 14, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/brouar0", 
             "name": "Brouardel, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 0, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/bussy0", 
             "name": "Bussy, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 7, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/calman0", 
             "name": "Calmann-L\u00e9vy, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 0, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/camond0", 
             "name": "Camondo, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 87, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/carama0", 
             "name": "Caraman-Chimay, famille de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 47, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/castel0", 
             "name": "Castellane, famille de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 4, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/chabri0", 
             "name": "Chabri\u00e8res, famille de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 4, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/chambr0", 
             "name": "Chambrun, famille de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 5, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/chaper0", 
             "name": "Chaperon, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 2, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/charle0", 
             "name": "Charles, Gilbert"
         }, 
         {
-            "group": 1, 
+            "mention_count": 4, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/charpe0", 
             "name": "Charpentier, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 2, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/chevre0", 
             "name": "Chevreau, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 1, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/cholet0", 
             "name": "Cholet, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 0, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/christi0", 
             "name": "Christie, MM."
         }, 
         {
-            "group": 1, 
+            "mention_count": 29, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/clermo0", 
             "name": "Clermont-Tonnerre, famille de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 4, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/comte0", 
             "name": "Comte, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 10, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/coquel0", 
             "name": "Coquelin, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 2, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/costa0", 
             "name": "Costa de Beauregard, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 0, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/courto0", 
             "name": "Courtois, mssr."
         }, 
         {
-            "group": 1, 
+            "mention_count": 14, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/cremie0", 
             "name": "Cr\u00e9mieux, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 3, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/critic0", 
             "name": "Criticos, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 16, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/cruppi0", 
             "name": "Cruppi, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 5, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/dairea0", 
             "name": "Daireaux, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 0, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/dancon0", 
             "name": "Dancongn\u00e9e, la famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 245, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/daudet0", 
             "name": "Daudet, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 0, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/debatp0", 
             "name": "Debat-Ponsan, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 2, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/devoyo0", 
             "name": "Devoyod, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 1, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/douste0", 
             "name": "Douste, les demoiselles"
         }, 
         {
-            "group": 1, 
+            "mention_count": 0, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/drapie0", 
             "name": "Drapier"
         }, 
         {
-            "group": 1, 
+            "mention_count": 0, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/droz0", 
             "name": "Droz, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 3, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/dubami0", 
             "name": "Dubois-Amiot, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 0, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/duez0", 
             "name": "Duez, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 1, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/dumain0", 
             "name": "Dumaine, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 14, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/duplay0", 
             "name": "Duplay, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 1, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/durfor0", 
             "name": "Durfort, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 4, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/elliss0", 
             "name": "Ellissen, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 0, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/errazu0", 
             "name": "Errazu, mssr. de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 15, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/esslin0", 
             "name": "Essling, famille d'"
         }, 
         {
-            "group": 1, 
+            "mention_count": 0, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/fauchi0", 
             "name": "Fauchier-Magnan, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 1, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/fernan0", 
             "name": "Fernandez, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 154, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/ferrar0", 
             "name": "Ferrari, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 19, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/finaly0", 
             "name": "Finaly, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 14, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/fitzja0", 
             "name": "Fitz-James, famille de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 90, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/flers0", 
             "name": "Flers, les"
         }, 
         {
-            "group": 1, 
+            "mention_count": 26, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/fould0", 
             "name": "Fould, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 135, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/france0", 
             "name": "France, famille (d'Anatole)"
         }, 
         {
-            "group": 1, 
+            "mention_count": 2, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/franqu0", 
             "name": "Franqueville, comte et comtesse de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 0, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/fratel0", 
             "name": "Fratellini, les"
         }, 
         {
-            "group": 1, 
+            "mention_count": 0, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/froiss0", 
             "name": "Froissard de Broissia, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 5, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/fromen0", 
             "name": "Froment-Meurice, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 20, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/gabria0", 
             "name": "Gabriac, famille de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 0, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/gagey0", 
             "name": "Gagey, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 0, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/galitz0", 
             "name": "Galitzine, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 11, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/ganay0", 
             "name": "Ganay, famille de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 36, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/gander0", 
             "name": "Ganderax, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 9, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/germin0", 
             "name": "Germiny, famille de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 5, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/ghika0", 
             "name": "Ghika, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 36, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/goncou0", 
             "name": "Goncourt, les fr\u00e8res"
         }, 
         {
-            "group": 1, 
+            "mention_count": 12, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/gontau0", 
             "name": "Gontaut-Biron, famille de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 0, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/gramed0", 
             "name": "Gramedo, famille de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 54, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/gramon0", 
             "name": "Gramont, famille de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 99, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/gregh0", 
             "name": "Gregh, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 76, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/guiche0", 
             "name": "Guiche, le duc et la duchesse"
         }, 
         {
-            "group": 1, 
+            "mention_count": 0, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/guise0", 
             "name": "Guise, famille de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 2, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/gunzbu0", 
             "name": "Gunzburg, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 0, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/gutman0", 
             "name": "Gutmann, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 403, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/hahn0", 
             "name": "Hahn, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 17, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/hausso0", 
             "name": "Haussonville, famille d'"
         }, 
         {
-            "group": 1, 
+            "mention_count": 12, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/hebrar0", 
             "name": "H\u00e9brard, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 0, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/hennes0", 
             "name": "Hennessy, les"
         }, 
         {
-            "group": 1, 
+            "mention_count": 10, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/henrau0", 
             "name": "Sancholle Henraux, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 38, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/heredi0", 
             "name": "Heredia, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 4, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/hesse0", 
             "name": "Hesse, prince de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 3, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/hinnis0", 
             "name": "Hinnisdal, famille d'"
         }, 
         {
-            "group": 1, 
+            "mention_count": 14, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/howlan0", 
             "name": "Howland, mssr. ou mme"
         }, 
         {
-            "group": 1, 
+            "mention_count": 7, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/humber0", 
             "name": "Humbert, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 4, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/janze0", 
             "name": "Janz\u00e9, famille de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 4, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/joncie0", 
             "name": "Jonci\u00e8res, famille de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 1, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/labord0", 
             "name": "Laborde, famille de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 0, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/laisne0", 
             "name": "Laisn\u00e9, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 73, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/laroch0", 
             "name": "La Rochefoucauld, famille de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 83, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/lauris0", 
             "name": "Lauris, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 11, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/lebarg0", 
             "name": "Le Bargy, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 1, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/legend0", 
             "name": "Legendre, Mme"
         }, 
         {
-            "group": 1, 
+            "mention_count": 316, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/lemair0", 
             "name": "Lemaire, mssr. et mme"
         }, 
         {
-            "group": 1, 
+            "mention_count": 6, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/leonin0", 
             "name": "Leonino, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 2, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/lessep0", 
             "name": "Lesseps, famille de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 10, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/lubers0", 
             "name": "Lubersac, famille de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 6, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/luynes0", 
             "name": "Luynes, famille de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 21, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/madraz0", 
             "name": "Madrazo, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 0, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/maigre0", 
             "name": "Maigret, famille de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 1, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/mailly0", 
             "name": "Mailly-Nesle, famille de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 0, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/maleis0", 
             "name": "Maleyssie, famille de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 0, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/manoeu0", 
             "name": "Manoeuvrier, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 2, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/marcua0", 
             "name": "Marcuard, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 1, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/marx0", 
             "name": "Marx, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 2, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/maupeo0", 
             "name": "Maup\u00e9ou, famille de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 1, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/meffra0", 
             "name": "Meffray, famille de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 2, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/meline0", 
             "name": "M\u00e9line, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 0, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/meurio0", 
             "name": "Meuriot, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 19, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/meyer0", 
             "name": "Meyer, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 0, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/molino0", 
             "name": "Molinos, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 344, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/monfez0", 
             "name": "Montesquiou-Fezensac, famille de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 16, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/monteb0", 
             "name": "Montebello, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 54, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/murat0", 
             "name": "Murat, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 2, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/nadar0", 
             "name": "Nadar, F\u00e9lix ou Paul?"
         }, 
         {
-            "group": 1, 
+            "mention_count": 9, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/nathan0", 
             "name": "Nathan, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 7, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/neubur0", 
             "name": "Neuburger, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 8, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/neufvi0", 
             "name": "Neufville, famille de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 3, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/nion0", 
             "name": "Nion, famille de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 160, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/noaill0", 
             "name": "Noailles, famille de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 0, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/nounez0", 
             "name": "Nounez, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 3, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/ollone0", 
             "name": "Ollone, comte et comtesse d'"
         }, 
         {
-            "group": 1, 
+            "mention_count": 8, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/orlean0", 
             "name": "Orl\u00e9ans, famille d'"
         }, 
         {
-            "group": 1, 
+            "mention_count": 15, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/paris0", 
             "name": "P\u00e2ris, les"
         }, 
         {
-            "group": 1, 
+            "mention_count": 1, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/pillau0", 
             "name": "Pillaut, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 4, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/placci0", 
             "name": "Placci, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 22, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/plante0", 
             "name": "Plantevigne, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 5, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/poirso0", 
             "name": "Poirson, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 73, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/polign0", 
             "name": "Polignac, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 8, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/porges0", 
             "name": "Porg\u00e8s, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 21, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/porto0", 
             "name": "Porto-Riche, famille de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 31, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/pouque0", 
             "name": "Pouquet, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 26, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/pourta0", 
             "name": "Pourtal\u00e8s, famille de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 10, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/pracom0", 
             "name": "Pracomtal, famille de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 1962, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/proust0", 
             "name": "Proust, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 0, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/puyseg0", 
             "name": "Puys\u00e9gur, les"
         }, 
         {
-            "group": 1, 
+            "mention_count": 33, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/radziw0", 
             "name": "Radziwill, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 0, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/rehbin0", 
             "name": "Rehbinder, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 0, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/riance0", 
             "name": "Riancey, famille de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 3, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/rodrig0", 
             "name": "Rodrigues-Ely, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 34, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/rohan0", 
             "name": "Rohan, famille de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 7, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/rosny0", 
             "name": "Rosny, J-H"
         }, 
         {
-            "group": 1, 
+            "mention_count": 16, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/rothsc0", 
             "name": "Rothschild, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 6, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/roussy0", 
             "name": "Roussy, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 0, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/salvag0", 
             "name": "Salvago, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 14, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/sardou0", 
             "name": "Sardou, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 6, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/segonz0", 
             "name": "Segonzac, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 10, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/segur0", 
             "name": "S\u00e9gur, famille de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 6, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/semina0", 
             "name": "Seminario, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 2, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/singer0", 
             "name": "Singer, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 45, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/stern0", 
             "name": "Stern, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 128, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/straus0", 
             "name": "Straus, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 31, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/thomso0", 
             "name": "Thomson, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 0, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/touqui0", 
             "name": "Touquier, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 1, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/ulmann0", 
             "name": "Ulmann, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 0, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/valent0", 
             "name": "Valentinois, les"
         }, 
         {
-            "group": 1, 
+            "mention_count": 7, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/verded0", 
             "name": "Verd\u00e9-Delisle, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 0, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/verdur0", 
             "name": "Verdurin, les"
         }, 
         {
-            "group": 1, 
+            "mention_count": 2, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/vitali0", 
             "name": "Vitali, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 10, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/vogue0", 
             "name": "Vog\u00fc\u00e9, famille de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 0, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/wallet0", 
             "name": "Wallet, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 7, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/waru0", 
             "name": "Waru, famille de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 54, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/weil0", 
             "name": "Weil, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 2, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/weiswe0", 
             "name": "Weisweiller, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 2, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/winter0", 
             "name": "Winter, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 0, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/ybarro0", 
             "name": "Ybarrondo, famille de"
         }, 
         {
-            "group": 1, 
+            "mention_count": 58, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/yeatma0", 
             "name": "Yeatman, famille"
         }, 
         {
-            "group": 1, 
+            "mention_count": 2, 
             "id": "http://catalogdata.library.illinois.edu/lod/entities/Persons/kp/yturbe0", 
             "name": "Yturbe, mssr. ou Mme de"
         }
